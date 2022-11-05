@@ -18,21 +18,32 @@ import {
   Button,
   Stack,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import db from "../../firebase-config";
 import { collection, getDocs } from "firebase/firestore";
 
 function RenderPage() {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const [userData, setUserData] = useState([]);
   const display = async () => {
     const firestoreData = await getDocs(collection(db, "Schools"));
     setData(firestoreData);
+
+    const firestoreuserData = await getDocs(collection(db, "Users"));
+    setUserData(firestoreuserData);
   };
   const tableData = [];
+  const userd = [];
   data.forEach((element) => {
     const row = element._document;
 
     tableData.push(row);
+  });
+
+  userData.forEach((element) => {
+    const row = element._document;
+    userd.push(row);
   });
 
   useEffect(() => {
@@ -66,26 +77,31 @@ function RenderPage() {
                       <>
                         <Tr>
                           <Td>{row.Name.stringValue}</Td>
-                          <Td>
-                            {" "}
-                            {row.Street.stringValue +
-                              " " +
-                              row.Barangay.stringValue +
-                              " " +
-                              row.City.stringValue}
-                          </Td>
+                          <Td> {row.Address.stringValue}</Td>
                           <Td>
                             {id}
-                            <Link to="../Admin/Schoolinfo">
-                              {" "}
-                              <Button
-                                variant={"ghost"}
-                                size="sm"
-                                color={"green.500"}
-                              >
-                                <i className="fas fa-edit"></i>
-                              </Button>
-                            </Link>
+
+                            <Button
+                              variant={"ghost"}
+                              size="sm"
+                              color={"green.500"}
+                              onClick={() => {
+                                navigate("/Admin/Schoolinfo", {
+                                  state: {
+                                    id: id,
+                                    data: tableData,
+                                    user: userd.filter(
+                                      (x) =>
+                                        x.data.value.mapValue.fields.SchooliD
+                                          .stringValue == id
+                                    ),
+                                  },
+                                });
+                              }}
+                            >
+                              <i className="fas fa-edit"></i>
+                            </Button>
+
                             <Button
                               variant={"ghost"}
                               size="sm"

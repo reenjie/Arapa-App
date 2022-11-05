@@ -24,35 +24,70 @@ import {
   AlertTitle,
   AlertDescription,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { doc, setDoc } from "firebase/firestore";
+import db from "../../firebase-config";
+import { v4 as uuid } from "uuid";
+import swal from "sweetalert";
 function Register() {
+  const navigate = useNavigate();
   /* const [email, setEmail] = useState(""); */
 
-  function handleSubmit() {}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const school_unique_id = uuid();
+    const user_unique_id = uuid();
+
+    const userpass = e.target.userpassword.value;
+    const reenterpass = e.target.userreenterpassword.value;
+
+    if (userpass == reenterpass) {
+      const result = await setDoc(doc(db, "Schools", school_unique_id), {
+        Address: e.target.schooladdress.value,
+        Contact: e.target.usercontact.value,
+        Description: e.target.schooldescription.value,
+        Email: e.target.schoolemail.value,
+        Name: e.target.schoolname.value,
+        Weblink: e.target.schoolwebsite.value,
+        mapID: "",
+        status: 0,
+      }).then(() => {
+        //school_unique_id
+
+        setDoc(doc(db, "Users", user_unique_id), {
+          Contact: e.target.usercontact.value,
+          Email: e.target.useremail.value,
+          Name: e.target.username.value,
+          Password: e.target.userpassword.value,
+          SchooliD: school_unique_id,
+        }).then(() => {
+          swal(
+            "Registered Successfully",
+            "You are Registered Successfully!",
+            "success"
+          ).then(() => {
+            navigate("/Account/Info");
+          });
+        });
+      });
+    } else {
+      swal(
+        "Password Does not Match!",
+        "Please make sure Reentered password match your first password",
+        "error"
+      ).then(() => {});
+    }
+  };
 
   return (
     <>
-      <form>
+      <form method={"post"} onSubmit={handleSubmit}>
         <div className="header">
           <Box float={"left"} p="2">
             <Text fontSize="2xl">Arapa</Text>
           </Box>
-          <Box float={"right"} p="2">
-            <Button size={"sm"} fontWeight="normal" borderRadius={0}>
-              <i
-                className="fas fa-logout"
-                style={{
-                  backgroundColor: "maroon",
-                  padding: "5px",
-                  color: "white",
-                  borderRadius: "4px",
-                  marginRight: "5px",
-                }}
-              ></i>{" "}
-              Logout
-            </Button>
-          </Box>
+          <Box float={"right"} p="2"></Box>
         </div>
 
         <div className="accbody">
@@ -77,7 +112,7 @@ function Register() {
                   </Text>
                 </Box>
                 <Box mb={2}>
-                  <Input size={"sm"} autoFocus />
+                  <Input size={"sm"} name="schoolname" autoFocus required />
                 </Box>
 
                 <Box>
@@ -86,7 +121,16 @@ function Register() {
                   </Text>
                 </Box>
                 <Box mb={2}>
-                  <Input size={"sm"} />
+                  <Input size={"sm"} name="schooladdress" required />
+                </Box>
+
+                <Box>
+                  <Text size={"md"} fontSize="16">
+                    School Email :
+                  </Text>
+                </Box>
+                <Box mb={2}>
+                  <Input size={"sm"} name="schoolemail" required />
                 </Box>
                 <Box>
                   <Text size={"md"} fontSize="16">
@@ -94,7 +138,7 @@ function Register() {
                   </Text>
                 </Box>
                 <Box mb={2}>
-                  <Input size={"sm"} />
+                  <Input size={"sm"} name="schoolwebsite" required />
                 </Box>
                 <Box>
                   <Text size={"md"} fontSize="16">
@@ -102,7 +146,7 @@ function Register() {
                   </Text>
                 </Box>
                 <Box mb={2}>
-                  <Textarea size={"sm"} />
+                  <Textarea size={"sm"} name="schooldescription" required />
                 </Box>
 
                 <Box mt={5}>
@@ -153,7 +197,7 @@ function Register() {
                         </Text>
                       </Box>
                       <Box mb={2}>
-                        <Input size={"sm"} />
+                        <Input size={"sm"} name="username" required />
                       </Box>
                       <Box>
                         <Text size={"md"} fontSize="16">
@@ -161,7 +205,7 @@ function Register() {
                         </Text>
                       </Box>
                       <Box mb={2}>
-                        <Input size={"sm"} />
+                        <Input size={"sm"} name="usercontact" required />
                       </Box>
                       <Box>
                         <Text size={"md"} fontSize="16">
@@ -169,7 +213,7 @@ function Register() {
                         </Text>
                       </Box>
                       <Box mb={2}>
-                        <Input size={"sm"} />
+                        <Input size={"sm"} name="useremail" required />
                       </Box>
 
                       <Box>
@@ -178,7 +222,13 @@ function Register() {
                         </Text>
                       </Box>
                       <Box>
-                        <Input placeholder="Enter New Password  " size="sm" />
+                        <Input
+                          placeholder="Enter New Password  "
+                          size="sm"
+                          required
+                          name="userpassword"
+                          type={"password"}
+                        />
                       </Box>
                       <Box>
                         <Text size={"sm"} fontSize="16">
@@ -186,7 +236,13 @@ function Register() {
                         </Text>
                       </Box>
                       <Box>
-                        <Input placeholder="ReEnter Password  " size="sm" />
+                        <Input
+                          type={"password"}
+                          placeholder="ReEnter Password  "
+                          size="sm"
+                          required
+                          name="userreenterpassword"
+                        />
                       </Box>
                       <Box mb={2}>
                         <Stack direction={"row"} mt={5}>
@@ -194,6 +250,7 @@ function Register() {
                             variant="solid"
                             colorScheme={"facebook"}
                             size="md"
+                            type={"submit"}
                           >
                             Register
                           </Button>
