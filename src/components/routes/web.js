@@ -11,8 +11,9 @@ import SchoolInfo from "../../Pages/admin/SchoolInfo";
 import Download from "../../Pages/Download";
 import Account from "../../Pages/Account";
 import Search from "../../Pages/Search";
+import useMain from "../../Pages/auth/MainContext";
 
-export default function Routing() {
+const Routing = () => {
   return (
     <BrowserRouter>
       <Routes>
@@ -32,4 +33,6 @@ export default function Routing() {
       </Routes>
     </BrowserRouter>
   );
-}
+};
+
+export default Routing;

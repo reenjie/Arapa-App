@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../css/App.css";
 import {
   Box,
@@ -18,16 +18,26 @@ import {
   SimpleGrid,
   Image,
   Badge,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
-import logo from '../../images/20944480.jpg';
 
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../../images/20944480.jpg";
+import db from "../../firebase-config";
+import { useToast } from "@chakra-ui/react";
+import RedirectifAuth from "./RedirectifAuth";
+import { collection, query, where, getDocs } from "firebase/firestore";
 function Login() {
+  const toast = useToast();
+  const redirect = RedirectifAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = React.useState(false);
+  const [error, setError] = useState(false);
   const handleClick = () => setShow(!show);
-
+  useEffect(() => {}, [redirect]);
   function handleInputChange(e) {
     const value = e.target.value;
     const type = e.target.name;
@@ -41,97 +51,134 @@ function Login() {
         setPassword(value);
         break;
     }
+
+    setError(false);
   }
 
-  function handleSubmit() {}
-return(
-  <>
- <Stack >
-  <Container>
-  <Box  id="login_box" >
-  <Center h="100vh" color="white"  ml='3'>
-        <Box id="login" shadow={'xl'} borderWidth='2px'>
-          <form>
-            <FormControl>
-              <Stack>
-                <Center mt={4} >
-                 
-                  <Text ml={4} fontSize="4xl" >
-                <Link to='/'>  <Button variant={'link'} fontSize='4xl'>Arapa App</Button>  </Link>
-                    <Badge ml={2} variant='outline' colorScheme='green'>
-                  Sign in
-                  </Badge>
-                  </Text>
-                
-                
-                </Center>
-              </Stack>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-              <FormLabel mt={"20px"}>Email</FormLabel>
-              <Input
-                type="email"
-                borderRadius={"3px"}
-                required
-                name="email"
-                placeholder="Enter Email"
-                onChange={handleInputChange}
-                autoFocus
-              />
+    const q = query(
+      collection(db, "Users"),
+      where("Email", "==", email),
+      where("Password", "==", password)
+    );
 
-              <FormLabel mt={5}>Password</FormLabel>
-              <InputGroup size="md">
-                <Input
-                  pr="4.5rem"
-                  type={show ? "text" : "password"}
-                  placeholder="Enter password"
-                  name="password"
-                  required
-                  onChange={handleInputChange}
-                  id="password"
-                />
-                <InputRightElement width="4.5rem">
-                  <Button h="1.75rem" size="sm" onClick={handleClick}>
-                    {show ? "Hide" : "Show"}
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
+    const querySnapshot = await getDocs(q);
 
-              <Button
-                type="submit"
-                colorScheme="blue"
-                w="100%"
-                mt={5}
-                mb={"10px"}
-              >
-                Log in
-              </Button>
+    if (querySnapshot.size >= 1) {
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        const token = { id: doc.id, data: doc.data() };
+        localStorage.setItem("Userauth", JSON.stringify(token));
 
-          
+        if (doc.data().usertype == 1) {
+          navigate("/Admin/Dashboard");
+        } else {
+          navigate("/Account/Info");
+        }
+      });
+    } else {
+      setPassword("");
+      setError(true);
+    }
+  };
+  return (
+    <>
+      <Stack>
+        <Container>
+          <Box id="login_box">
+            <Center h="100vh" color="white" ml="3">
+              <Box id="login" shadow={"xl"} borderWidth="2px">
+                <form method="post" onSubmit={handleSubmit}>
+                  <FormControl isInvalid={error ? true : false}>
+                    <Stack>
+                      <Center mt={4}>
+                        <Text ml={4} fontSize="4xl">
+                          <Link to="/">
+                            {" "}
+                            <Button variant={"link"} fontSize="4xl">
+                              Arapa App
+                            </Button>{" "}
+                          </Link>
+                          <Badge ml={2} variant="outline" colorScheme="green">
+                            Sign in
+                          </Badge>
+                        </Text>
+                      </Center>
+                    </Stack>
 
-              <FormHelperText>
-                No Account?
-                <Link to={"../register"}>
-                  {" "}
-                  <Button ml={2} colorScheme="teal" variant="link">
-                    Register here
-                  </Button>
-                </Link>
-              </FormHelperText>
-            </FormControl>
-          </form>
-        </Box>
-      </Center>
+                    {error ? (
+                      <>
+                        <Alert status="error">
+                          <AlertIcon />
+                          Entered Credentials does not match our Records.
+                        </Alert>
+                      </>
+                    ) : (
+                      ""
+                    )}
 
-  </Box>
-  </Container>
+                    <FormLabel mt={"20px"}>Email</FormLabel>
+                    <Input
+                      type="email"
+                      borderRadius={"3px"}
+                      required
+                      name="email"
+                      placeholder="Enter Email"
+                      onChange={handleInputChange}
+                      autoFocus
+                      value={email}
+                    />
 
+                    <FormLabel mt={5}>Password</FormLabel>
+                    <InputGroup size="md">
+                      <Input
+                        pr="4.5rem"
+                        type={show ? "text" : "password"}
+                        placeholder="Enter password"
+                        name="password"
+                        required
+                        onChange={handleInputChange}
+                        id="password"
+                        value={password}
+                      />
+                      <InputRightElement width="4.5rem">
+                        <Button h="1.75rem" size="sm" onClick={handleClick}>
+                          {show ? "Hide" : "Show"}
+                        </Button>
+                      </InputRightElement>
+                    </InputGroup>
 
-  </Stack>
+                    <Button
+                      type="submit"
+                      colorScheme="blue"
+                      w="100%"
+                      mt={5}
+                      mb={"10px"}
+                    >
+                      Log in
+                    </Button>
 
-
-  </>
-);
-/*   return (
+                    <FormHelperText>
+                      No Account?
+                      <Link to={"../register"}>
+                        {" "}
+                        <Button ml={2} colorScheme="teal" variant="link">
+                          Register here
+                        </Button>
+                      </Link>
+                    </FormHelperText>
+                  </FormControl>
+                </form>
+              </Box>
+            </Center>
+          </Box>
+        </Container>
+      </Stack>
+    </>
+  );
+  /*   return (
     <Container id="login_container" maxW="md" mt={340} color="#262626">
       <Center h="100px" color="white">
         <Box id="login">

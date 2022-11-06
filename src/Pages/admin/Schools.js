@@ -20,35 +20,67 @@ import {
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import db from "../../firebase-config";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
+  where,
+} from "firebase/firestore";
+import swal from "sweetalert";
+import { async } from "@firebase/util";
+import RedirectifAuth from "../auth/RedirectifAuth";
 
 function RenderPage() {
+  const redirect = RedirectifAuth();
   const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const [userData, setUserData] = useState([]);
+  const [user, setUser] = useState([]);
+  const [fetch, setFetch] = useState(false);
+  const alluser = [];
   const display = async () => {
-    const firestoreData = await getDocs(collection(db, "Schools"));
+    const firestoreData = await getDocs(
+      query(collection(db, "Schools"), where("status", "==", 1))
+    );
     setData(firestoreData);
 
-    const firestoreuserData = await getDocs(collection(db, "Users"));
-    setUserData(firestoreuserData);
+    const firestoreUserData = await getDocs(collection(db, "Users"));
+    setUser(firestoreUserData);
   };
-  const tableData = [];
-  const userd = [];
-  data.forEach((element) => {
-    const row = element._document;
-
-    tableData.push(row);
-  });
-
-  userData.forEach((element) => {
-    const row = element._document;
-    userd.push(row);
-  });
+  const dData = [];
+  const dUser = [];
 
   useEffect(() => {
     display();
-  }, []);
+    setFetch(false);
+  }, [fetch]);
+
+  const handleDelete = async (e) => {
+    const id = e.currentTarget.dataset.id;
+    const userid = e.currentTarget.dataset.userid;
+
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover it",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        deleteDoc(doc(db, "Schools", id));
+        deleteDoc(doc(db, "Users", userid)).then(() => {
+          swal(
+            "Deleted Successfully",
+            "School and User data has been Deleted Successfully!",
+            "success"
+          ).then(() => {
+            setFetch(true);
+          });
+        });
+      }
+    });
+  };
 
   return (
     <div>
@@ -70,50 +102,53 @@ function RenderPage() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {tableData.map((e) => {
-                    const row = e.data.value.mapValue.fields;
-                    const id = e.key.path.segments[6];
-                    return (
-                      <>
-                        <Tr>
-                          <Td>{row.Name.stringValue}</Td>
-                          <Td> {row.Address.stringValue}</Td>
-                          <Td>
-                            {id}
+                  {data.forEach((doc) => {
+                    const datauser = user.forEach((element) => {
+                      if (element.data().SchooliD == doc.id) {
+                        dUser.push({ id: element.id, data: element.data() });
+                      }
+                    });
+                    dData.push(
+                      <Tr>
+                        <Td>{doc.data().Name}</Td>
+                        <Td> {doc.data().Address}</Td>
+                        <Td>
+                          <Button
+                            variant={"ghost"}
+                            size="sm"
+                            color={"green.500"}
+                            onClick={() => {
+                              navigate("/Admin/Schoolinfo", {
+                                state: {
+                                  id: doc.id,
+                                  data: doc.data(),
+                                  user: dUser,
+                                },
+                              });
+                            }}
+                          >
+                            <i className="fas fa-edit"></i>
+                          </Button>
 
-                            <Button
-                              variant={"ghost"}
-                              size="sm"
-                              color={"green.500"}
-                              onClick={() => {
-                                navigate("/Admin/Schoolinfo", {
-                                  state: {
-                                    id: id,
-                                    data: tableData,
-                                    user: userd.filter(
-                                      (x) =>
-                                        x.data.value.mapValue.fields.SchooliD
-                                          .stringValue == id
-                                    ),
-                                  },
-                                });
-                              }}
-                            >
-                              <i className="fas fa-edit"></i>
-                            </Button>
-
-                            <Button
-                              variant={"ghost"}
-                              size="sm"
-                              color={"red.500"}
-                            >
-                              <i className="fas fa-trash-can"></i>
-                            </Button>
-                          </Td>
-                        </Tr>
-                      </>
+                          <Button
+                            variant={"ghost"}
+                            size="sm"
+                            color={"red.500"}
+                            data-id={doc.id}
+                            data-userid={dUser
+                              .filter((x) => x.data.SchooliD == doc.id)
+                              .map((row) => {
+                                return row.id;
+                              })}
+                            onClick={handleDelete}
+                          >
+                            <i className="fas fa-trash-can"></i>
+                          </Button>
+                        </Td>
+                      </Tr>
                     );
                   })}
+                  {dData}
                 </Tbody>
                 <Tfoot>
                   <Tr>

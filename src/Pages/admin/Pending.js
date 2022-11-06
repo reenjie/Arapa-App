@@ -18,8 +18,10 @@ import {
   Button,
   Stack,
 } from "@chakra-ui/react";
+import RedirectifAuth from "../auth/RedirectifAuth";
 
 function RenderPage() {
+  const redirect = RedirectifAuth();
   return (
     <div>
       <Container mt={10} maxW="2xxl">

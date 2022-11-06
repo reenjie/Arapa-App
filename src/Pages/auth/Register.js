@@ -61,6 +61,7 @@ function Register() {
           Name: e.target.username.value,
           Password: e.target.userpassword.value,
           SchooliD: school_unique_id,
+          usertype: 0,
         }).then(() => {
           swal(
             "Registered Successfully",

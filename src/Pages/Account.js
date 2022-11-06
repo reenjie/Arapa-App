@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../css/App.css";
 import {
   Image,
@@ -23,25 +23,50 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  color,
 } from "@chakra-ui/react";
 import { SearchIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import logo from "../images/home.jpg";
 import { Link } from "react-router-dom";
-function Account(props) {
+import Signout from "./auth/Signout";
+import Userdata from "./auth/Userdata";
+import RedirectifAuth from "./auth/RedirectifAuth";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import db from "../firebase-config";
+import { async } from "@firebase/util";
+
+function Account() {
+  const redirect = RedirectifAuth();
+  const [userId, setUserid] = useState(Userdata().id);
+  const [data, setData] = useState(Userdata().data);
+  const [school, setSchool] = useState([]);
+
+  const fetchSchool = async () => {
+    const firestoreData = await getDocs(collection(db, "Schools"));
+    firestoreData.forEach((doc) => {
+      if (doc.id == data.SchooliD) {
+        setSchool(doc.data());
+      }
+    });
+  };
+
+  useEffect(() => {
+    fetchSchool();
+  }, []);
+
   return (
     <>
       <div className="header">
         <Box float={"left"} p="2">
           <Text fontSize="2xl">Arapa</Text>
-
-          {/*  <Image
-        src="https://th.bing.com/th/id/OIP.PPmPYp9tRFPxurMFYv4zdQHaGl?pid=ImgDet&rs=1"
-        alt="Logo"
-        width={20}
-      /> */}
         </Box>
         <Box float={"right"} p="2">
-          <Button size={"sm"} fontWeight="normal" borderRadius={0}>
+          <Button
+            size={"sm"}
+            fontWeight="normal"
+            borderRadius={0}
+            onClick={Signout}
+          >
             <i
               className="fas fa-logout"
               style={{
@@ -62,7 +87,7 @@ function Account(props) {
           <SimpleGrid minChildWidth="300px" columns={2} spacing="10px">
             <Box>
               <Heading mb="5" color={"teal.400"} as="h3" size="lg">
-                San Beda University
+                {school.Name}
               </Heading>
               <Box>
                 <Text size={"md"} fontSize="16">
@@ -70,10 +95,11 @@ function Account(props) {
                 </Text>
               </Box>
               <Box mb={2}>
-                <Editable defaultValue="Editable">
-                  <EditablePreview />
-                  <EditableInput borderRadius={0} />
-                </Editable>
+                <Input
+                  defaultValue={school.Name}
+                  variant={"outline"}
+                  borderColor={"transparent"}
+                />
               </Box>
 
               <Box>
@@ -82,10 +108,11 @@ function Account(props) {
                 </Text>
               </Box>
               <Box mb={2}>
-                <Editable defaultValue="Editable">
-                  <EditablePreview />
-                  <EditableInput borderRadius={0} />
-                </Editable>
+                <Input
+                  defaultValue={school.Address}
+                  variant={"outline"}
+                  borderColor={"transparent"}
+                />
               </Box>
               <Box>
                 <Text size={"md"} fontSize="16">
@@ -93,10 +120,11 @@ function Account(props) {
                 </Text>
               </Box>
               <Box mb={2}>
-                <Editable defaultValue="Editable">
-                  <EditablePreview />
-                  <EditableInput borderRadius={0} />
-                </Editable>
+                <Input
+                  defaultValue={school.Weblink}
+                  variant={"outline"}
+                  borderColor={"transparent"}
+                />
               </Box>
               <Box>
                 <Text size={"md"} fontSize="16">
@@ -104,10 +132,11 @@ function Account(props) {
                 </Text>
               </Box>
               <Box mb={2}>
-                <Editable defaultValue="Editable">
-                  <EditablePreview />
-                  <EditableTextarea borderRadius={0} resize="none" />
-                </Editable>
+                <Textarea
+                  defaultValue={school.Description}
+                  variant={"outline"}
+                  borderColor={"transparent"}
+                />
               </Box>
 
               <Box>
@@ -166,10 +195,11 @@ function Account(props) {
                       </Text>
                     </Box>
                     <Box mb={2}>
-                      <Editable defaultValue="Editable">
-                        <EditablePreview />
-                        <EditableInput borderRadius={0} />
-                      </Editable>
+                      <Input
+                        defaultValue={data.Email}
+                        variant={"outline"}
+                        borderColor={"transparent"}
+                      />
                     </Box>
 
                     <Box>

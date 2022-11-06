@@ -13,6 +13,7 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import logo from "../../images/zcmc_logo.png";
+import Signout from "../../Pages/auth/Signout";
 export default function Zcmc_info(props) {
   const Info = () => {
     switch (props.usertype) {
@@ -55,21 +56,13 @@ export default function Zcmc_info(props) {
 
   return (
     <Stack mb={3}>
-     
-      <Center mt='10'>
-        <Avatar
-          size="xl"
-          name="Arapa Admin"
-          src=""
-          mt={2}
-          mb={2}
-        />
+      <Center mt="10">
+        <Avatar size="xl" name="Arapa Admin" src="" mt={2} mb={2} />
         <Flex mb={5} mt={2}>
           <Box ml="3">
             <Text fontWeight="bold" color={"blackAlpha.700"}>
-            Arapa Admin
+              Arapa Admin
             </Text>
-            <Info />
           </Box>
         </Flex>
       </Center>
@@ -103,7 +96,7 @@ export default function Zcmc_info(props) {
               Change Password
             </Text>
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={Signout}>
             <i className="fas fa-door-open"></i>
             <Text fontSize="sm" ml={2}>
               Logout
