@@ -32,29 +32,11 @@ import swal from "sweetalert";
 import { async } from "@firebase/util";
 import RedirectifAuth from "../auth/RedirectifAuth";
 
-function RenderPage() {
+function RenderPage({ user, data, setFetch }) {
   const redirect = RedirectifAuth();
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
-  const [user, setUser] = useState([]);
-  const [fetch, setFetch] = useState(false);
-  const alluser = [];
-  const display = async () => {
-    const firestoreData = await getDocs(
-      query(collection(db, "Schools"), where("status", "==", 1))
-    );
-    setData(firestoreData);
-
-    const firestoreUserData = await getDocs(collection(db, "Users"));
-    setUser(firestoreUserData);
-  };
   const dData = [];
   const dUser = [];
-
-  useEffect(() => {
-    display();
-    setFetch(false);
-  }, [fetch]);
 
   const handleDelete = async (e) => {
     const id = e.currentTarget.dataset.id;
@@ -164,11 +146,46 @@ function RenderPage() {
   );
 }
 function Schools(props) {
+  const [data, setData] = useState([]);
+  const [pendingdata, setPendingData] = useState([]);
+  const [user, setUser] = useState([]);
+  const [fetch, setFetch] = useState(false);
+  const alluser = [];
+  const display = async () => {
+    const firestoreData = await getDocs(
+      query(collection(db, "Schools"), where("status", "==", 1))
+    );
+    setData(firestoreData);
+
+    const firestorePData = await getDocs(
+      query(collection(db, "Schools"), where("status", "==", 0))
+    );
+
+    setPendingData(firestorePData);
+
+    const firestoreUserData = await getDocs(collection(db, "Users"));
+    setUser(firestoreUserData);
+  };
+
+  useEffect(() => {
+    display();
+    setFetch(false);
+  }, [fetch]);
+
   return (
     <>
       <AdminLayout
-        Sidebar_elements={<Sidebar selected={props.selected} />}
-        Page_Contents={<RenderPage />}
+        Sidebar_elements={
+          <Sidebar selected={props.selected} pending={pendingdata} />
+        }
+        Page_Contents={
+          <RenderPage
+            data={data}
+            user={user}
+            fetch={fetch}
+            setFetch={setFetch}
+          />
+        }
         Page_title="SCHOOLS"
       />
     </>

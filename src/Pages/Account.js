@@ -31,7 +31,15 @@ import { Link } from "react-router-dom";
 import Signout from "./auth/Signout";
 import Userdata from "./auth/Userdata";
 import RedirectifAuth from "./auth/RedirectifAuth";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import db from "../firebase-config";
 import { async } from "@firebase/util";
 
@@ -45,7 +53,14 @@ function Account() {
     const firestoreData = await getDocs(collection(db, "Schools"));
     firestoreData.forEach((doc) => {
       if (doc.id == data.SchooliD) {
-        setSchool(doc.data());
+        setSchool([
+          {
+            data: {
+              id: doc.id,
+              data: data,
+            },
+          },
+        ]);
       }
     });
   };
@@ -53,6 +68,10 @@ function Account() {
   useEffect(() => {
     fetchSchool();
   }, []);
+
+  console.log(school);
+
+  const handleChange = async (e) => {};
 
   return (
     <>
@@ -82,12 +101,12 @@ function Account() {
         </Box>
       </div>
 
-      <div className="accbody">
+      {/* <div className="accbody">
         <Box>
           <SimpleGrid minChildWidth="300px" columns={2} spacing="10px">
             <Box>
               <Heading mb="5" color={"teal.400"} as="h3" size="lg">
-                {school.Name}
+                {school[0].data.data.Name}
               </Heading>
               <Box>
                 <Text size={"md"} fontSize="16">
@@ -96,9 +115,11 @@ function Account() {
               </Box>
               <Box mb={2}>
                 <Input
-                  defaultValue={school.Name}
+                  defaultValue={school[0].data.data.Name}
                   variant={"outline"}
                   borderColor={"transparent"}
+                  data-type="name"
+                  onChange={handleChange}
                 />
               </Box>
 
@@ -109,7 +130,7 @@ function Account() {
               </Box>
               <Box mb={2}>
                 <Input
-                  defaultValue={school.Address}
+                  defaultValue={school[0].data.data.Address}
                   variant={"outline"}
                   borderColor={"transparent"}
                 />
@@ -121,7 +142,7 @@ function Account() {
               </Box>
               <Box mb={2}>
                 <Input
-                  defaultValue={school.Weblink}
+                  defaultValue={school[0].data.data.Weblink}
                   variant={"outline"}
                   borderColor={"transparent"}
                 />
@@ -133,7 +154,7 @@ function Account() {
               </Box>
               <Box mb={2}>
                 <Textarea
-                  defaultValue={school.Description}
+                  defaultValue={school[0].data.data.Description}
                   variant={"outline"}
                   borderColor={"transparent"}
                 />
@@ -177,16 +198,7 @@ function Account() {
                     Pin Location
                   </Button>
 
-                  {/*   <Stack mt={2} direction={"row"} width="100%" columns={2}>
-                    <Box width="25%">
-                      <Text size={"md"} fontSize="16">
-                        Password :
-                      </Text>
-                    </Box>
-                    <Box width="80%">
-                      <Input placeholder="" size="sm" w={"100%"} />
-                    </Box>
-                  </Stack> */}
+                
 
                   <Box mt={5}>
                     <Box>
@@ -225,7 +237,7 @@ function Account() {
             </Box>
           </SimpleGrid>
         </Box>
-      </div>
+      </div> */}
     </>
   );
 }

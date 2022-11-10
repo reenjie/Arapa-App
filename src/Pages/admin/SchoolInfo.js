@@ -22,21 +22,20 @@ import {
   Input,
   Textarea,
 } from "@chakra-ui/react";
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  where,
+} from "firebase/firestore";
 import db from "../../firebase-config";
 import swal from "sweetalert";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-function RenderPage() {
-  const location = useLocation();
+function RenderPage({ ID, data, type, readonly, users }) {
   const navigate = useNavigate();
-
-  const [ID, setID] = useState(location.state.id);
-  const [data, setData] = useState(location.state.data);
-
-  const [users, setUsers] = useState(
-    location.state.user.filter((x) => x.data.SchooliD == ID)
-  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,6 +91,8 @@ function RenderPage() {
                           size="sm"
                           w={"100%"}
                           name="schoolemail"
+                          readOnly={readonly ? true : false}
+                          cursor={readonly ? "default" : "text"}
                         />
                       </Box>
                     </Stack>
@@ -122,6 +123,8 @@ function RenderPage() {
                     w={"100%"}
                     required
                     name="schoolname"
+                    readOnly={readonly ? true : false}
+                    cursor={readonly ? "default" : "text"}
                   />
                 </Box>
 
@@ -138,6 +141,8 @@ function RenderPage() {
                     w={"100%"}
                     required
                     name="schooladdress"
+                    readOnly={readonly ? true : false}
+                    cursor={readonly ? "default" : "text"}
                   />
                 </Box>
                 <Box>
@@ -153,6 +158,8 @@ function RenderPage() {
                     w={"100%"}
                     required
                     name="schoolwebsite"
+                    readOnly={readonly ? true : false}
+                    cursor={readonly ? "default" : "text"}
                   />
                 </Box>
                 <Box>
@@ -167,6 +174,8 @@ function RenderPage() {
                     defaultValue={data.Description}
                     required
                     name="schooldescription"
+                    readOnly={readonly ? true : false}
+                    cursor={readonly ? "default" : "text"}
                   />
                 </Box>
 
@@ -183,6 +192,8 @@ function RenderPage() {
                     w={"100%"}
                     required
                     name="username"
+                    readOnly={readonly ? true : false}
+                    cursor={readonly ? "default" : "text"}
                   />
                 </Box>
 
@@ -199,6 +210,8 @@ function RenderPage() {
                     w={"100%"}
                     required
                     name="usercontact"
+                    readOnly={readonly ? true : false}
+                    cursor={readonly ? "default" : "text"}
                   />
                 </Box>
 
@@ -214,14 +227,17 @@ function RenderPage() {
                 </Box>
 
                 <Box mt="5" float={"right"}>
-                  <Button
-                    size={"sm"}
-                    variant={"solid"}
-                    colorScheme="teal"
-                    type="submit"
-                  >
-                    Save
-                  </Button>
+                  {type == "viewonly" ? null : (
+                    <Button
+                      size={"sm"}
+                      variant={"solid"}
+                      colorScheme="teal"
+                      type="submit"
+                    >
+                      Save
+                    </Button>
+                  )}
+
                   <Button
                     size={"sm"}
                     ml={2}
@@ -229,7 +245,7 @@ function RenderPage() {
                     colorScheme="teal"
                     type="button"
                     onClick={() => {
-                      navigate("/Admin/Schools");
+                      navigate(-1);
                     }}
                   >
                     Back
@@ -244,11 +260,43 @@ function RenderPage() {
   );
 }
 function SchoolInfo(props) {
+  const location = useLocation();
+  const [ID, setID] = useState(location.state.id);
+  const [data, setData] = useState(location.state.data);
+
+  const [pendingdata, setpendingData] = useState([]);
+  const [type, setType] = useState(location.state.type);
+  const [readonly, setReadonly] = useState(location.state.readonly);
+  const [fetch, setFetch] = useState(false);
+  const [users, setUsers] = useState(
+    location.state.user.filter((x) => x.data.SchooliD == ID)
+  );
+  const display = async () => {
+    const firestoreData = await getDocs(
+      query(collection(db, "Schools"), where("status", "==", 0))
+    );
+    setpendingData(firestoreData);
+  };
+  useEffect(() => {
+    display();
+    setFetch(false);
+  }, [fetch]);
   return (
     <>
       <AdminLayout
-        Sidebar_elements={<Sidebar selected={props.selected} />}
-        Page_Contents={<RenderPage />}
+        Sidebar_elements={
+          <Sidebar selected={props.selected} pending={pendingdata} />
+        }
+        Page_Contents={
+          <RenderPage
+            ID={ID}
+            data={data}
+            type={type}
+            readonly={readonly}
+            users={users}
+            setFetch={setFetch}
+          />
+        }
         Page_title="School-Info"
       />
     </>

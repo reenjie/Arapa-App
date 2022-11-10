@@ -21,7 +21,7 @@ import "../../css/App.css";
 import { Link } from "react-router-dom";
 import Zcmc_info from "../../components/layouts/info";
 
-function Sidebar(props) {
+function Sidebar({ pending }) {
   return (
     <div className="sidebar-links" id="sblink">
       <Zcmc_info usertype="admin" />
@@ -65,10 +65,12 @@ function Sidebar(props) {
             <li>
               <Container>
                 <span>
-                  <i className="fas fa-sync"></i> Pending{" "}
-                  <Badge variant="outline" colorScheme="green">
-                    New
-                  </Badge>
+                  <i className="fas fa-sync"></i> Pending
+                  {pending.size >= 1 ? (
+                    <Badge variant="outline" colorScheme="green">
+                      New
+                    </Badge>
+                  ) : null}
                 </span>
               </Container>
             </li>{" "}
