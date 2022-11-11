@@ -24,6 +24,10 @@ function RedirectifAuth() {
             navigate("/Admin/Schoolinfo");
             break;
 
+          case "/Admin/Users":
+            navigate("/Admin/Users");
+            break;
+
           default:
             navigate("/Admin/Dashboard");
             break;

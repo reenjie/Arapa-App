@@ -12,6 +12,7 @@ import Download from "../../Pages/Download";
 import Account from "../../Pages/Account";
 import Search from "../../Pages/Search";
 import useMain from "../../Pages/auth/MainContext";
+import User from "../../Pages/admin/User";
 
 const Routing = () => {
   return (
@@ -30,6 +31,7 @@ const Routing = () => {
         <Route path="Admin/Schools" element={<Schools />} />
         <Route path="Admin/Pending" element={<Pending />} />
         <Route path="Admin/Schoolinfo" element={<SchoolInfo />} />
+        <Route path="Admin/Users" element={<User />} />
       </Routes>
     </BrowserRouter>
   );

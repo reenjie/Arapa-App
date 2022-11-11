@@ -75,6 +75,18 @@ function Sidebar({ pending }) {
               </Container>
             </li>{" "}
           </Link>
+
+          <Link to="../Admin/Users">
+            {" "}
+            <li>
+              <Container>
+                <span>
+                  {" "}
+                  <i className="fas fa-users"></i> Users
+                </span>
+              </Container>
+            </li>{" "}
+          </Link>
         </ul>
       </Stack>
     </div>
