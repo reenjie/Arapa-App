@@ -13,11 +13,69 @@ import {
   Avatar,
   Container,
   SimpleGrid,
+  InputGroup,
+  InputRightElement,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import { SearchIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import logo from "../images/home.jpg";
-import { Link } from "react-router-dom";
-function App() {
+import { Link, useNavigate } from "react-router-dom";
+import db from "../firebase-config";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
+  where,
+} from "firebase/firestore";
+
+const App = () => {
+  const navigate = useNavigate();
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    const school = e.target.school.value;
+    const stype = e.target.schooltype.value;
+
+    const data = [];
+    const firestorePData = await getDocs(collection(db, "Schools"));
+
+    firestorePData.forEach((doc) => {
+      data.push({
+        data: {
+          id: doc.id,
+          contents: doc.data(),
+        },
+      });
+    });
+
+    const fetchResults = data.filter(
+      (x) =>
+        x.data.contents.Name.toLowerCase().includes(school.toLowerCase()) &&
+        x.data.contents.SchoolType.toLowerCase().includes(stype.toLowerCase())
+    );
+
+    if (fetchResults.length >= 1) {
+      navigate("Searchkey/Results", {
+        state: {
+          data: fetchResults,
+          searchkey: school,
+        },
+      });
+    } else {
+      navigate("Searchkey/Results", {
+        state: {
+          data: [],
+          searchkey: school,
+          searchType: stype,
+        },
+      });
+    }
+  };
+
   return (
     <>
       <div className="header">
@@ -65,51 +123,70 @@ function App() {
                   Arapa - App
                 </Text>
               </Stack>
+              <Stack>
+                <form onSubmit={handleSearch}>
+                  <InputGroup size="md" mt={4}>
+                    <Input
+                      pr="4.5rem"
+                      type={"text"}
+                      bg={"whiteAlpha.700"}
+                      placeholder="Search for Schools"
+                      required
+                      name="school"
+                    />
+                    <InputRightElement width="5rem">
+                      <Button
+                        h="1.75rem"
+                        size="sm"
+                        variant={"solid"}
+                        colorScheme={"green"}
+                        mr={2}
+                        type="submit"
+                      >
+                        Search <SearchIcon style={{ marginLeft: "5px" }} />
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+
+                  <Select
+                    placeholder="-- Select Type --"
+                    bg={"whiteAlpha.400"}
+                    color={"blue.600"}
+                    textAlign={"center"}
+                    borderRadius={3}
+                    borderWidth={1}
+                    required
+                    size={"sm"}
+                    name="schooltype"
+                    mt={2}
+                  >
+                    <option value="Primary">Primary</option>
+                    <option value="High School">High School</option>
+                    <option value="Senior High School">
+                      Senior High School
+                    </option>
+                    <option value="College">College</option>
+                  </Select>
+                </form>
+              </Stack>
+
+              <Center>
+                <Box mt="10">
+                  <Link to="/login">
+                    {" "}
+                    <Button variant={"link"} color="teal.500">
+                      LOGIN <ExternalLinkIcon ml={1} />
+                    </Button>
+                  </Link>
+                </Box>
+              </Center>
             </Box>
           </Center>
-          <Container>
-            <Stack direction={"rows"} spacing="0" mt="-60">
-              <Input
-                placeholder="Search for Schools, Location"
-                size="lg"
-                backgroundColor={"white"}
-                mr={2}
-                autoFocus
-              />
-
-              <Select
-                placeholder="Select option"
-                backgroundColor={"white"}
-                borderRadius={0}
-                width="240px"
-                borderWidth={2}
-              >
-                <option value="option1">Option 1</option>
-                <option value="option2">Option 2</option>
-                <option value="option3">Option 3</option>
-              </Select>
-              <IconButton
-                borderRadius={0}
-                colorScheme="red"
-                aria-label="Search database"
-                icon={<SearchIcon />}
-              />
-            </Stack>
-            <Center>
-              <Box mt="10">
-                <Link to="/login">
-                  {" "}
-                  <Button variant={"link"} color="teal.500">
-                    LOGIN <ExternalLinkIcon ml={1} />
-                  </Button>
-                </Link>
-              </Box>
-            </Center>
-          </Container>
+          <Container></Container>
         </Box>
       </div>
     </>
   );
-}
+};
 
 export default App;

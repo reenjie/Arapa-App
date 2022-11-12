@@ -25,12 +25,14 @@ import {
   AlertDescription,
   color,
 } from "@chakra-ui/react";
-import { SearchIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import { SearchIcon, ExternalLinkIcon, SettingsIcon } from "@chakra-ui/icons";
 import logo from "../images/home.jpg";
 import { Link } from "react-router-dom";
 import Signout from "./auth/Signout";
 import Userdata from "./auth/Userdata";
 import RedirectifAuth from "./auth/RedirectifAuth";
+import ChangeCourse from "./ChangeCourse";
+
 import {
   collection,
   query,
@@ -50,6 +52,9 @@ function Account() {
   const [data, setData] = useState(Userdata().data);
   const [school, setSchool] = useState([]);
   const [newpass, setNewpass] = useState("");
+  const [fetch, setFetch] = useState(false);
+
+  const [courses, setCourses] = useState([]);
 
   const fetchSchool = async () => {
     const firestoreData = await getDocs(collection(db, "Schools"));
@@ -59,7 +64,7 @@ function Account() {
   const dData = [];
   useEffect(() => {
     fetchSchool();
-  }, []);
+  }, [fetch]);
 
   const handleChange = async (e) => {
     const typeofdata = e.currentTarget.dataset.type;
@@ -132,6 +137,7 @@ function Account() {
 
       {school.forEach((doc) => {
         if (data.SchooliD == doc.id) {
+          // setCourses(doc.data().Courses);
           dData.push(
             <>
               <div className="accbody">
@@ -203,10 +209,44 @@ function Account() {
                         />
                       </Box>
 
+                      <Select
+                        placeholder="-- Select Type --"
+                        backgroundColor={"white"}
+                        borderRadius={0}
+                        borderWidth={2}
+                        required
+                        name="schooltype"
+                        defaultValue={doc.data().SchoolType}
+                        data-type="SchoolType"
+                        data-id={doc.id}
+                        onChange={handleChange}
+                      >
+                        <option value="Primary">Primary</option>
+                        <option value="High School">High School</option>
+                        <option value="Senior High School">
+                          Senior High School
+                        </option>
+                        <option value="College">College</option>
+                      </Select>
+
                       <Box>
                         <Text size={"md"} fontSize="16">
                           Courses Open
                         </Text>
+
+                        <Box p={5}>
+                          <ul>
+                            {doc.data().Courses.map((row) => {
+                              return (
+                                <>
+                                  <li>{row.value}</li>
+                                </>
+                              );
+                            })}
+                          </ul>
+
+                          <ChangeCourse setFetch={setFetch} schoolid={doc.id} />
+                        </Box>
                       </Box>
                       <Box mb={2}>
                         <Editable defaultValue="Editable">
@@ -295,7 +335,6 @@ function Account() {
           );
         }
       })}
-
       {dData}
     </>
   );

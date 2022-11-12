@@ -29,9 +29,11 @@ import { doc, setDoc } from "firebase/firestore";
 import db from "../../firebase-config";
 import { v4 as uuid } from "uuid";
 import swal from "sweetalert";
+import AddCourse from "./AddCourse";
 function Register() {
   const navigate = useNavigate();
-  /* const [email, setEmail] = useState(""); */
+  const [courses, setCourses] = useState([]);
+  const [coursesCount, setcoursesCount] = useState();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,6 +52,8 @@ function Register() {
         Email: e.target.schoolemail.value,
         Name: e.target.schoolname.value,
         Weblink: e.target.schoolwebsite.value,
+        SchoolType: e.target.stype.value,
+        Courses: courses,
         mapID: "",
         status: 0,
       }).then(() => {
@@ -148,6 +152,33 @@ function Register() {
                 </Box>
                 <Box mb={2}>
                   <Textarea size={"sm"} name="schooldescription" required />
+                </Box>
+
+                <Box mb={2}>
+                  <Select
+                    placeholder="-- Select Type --"
+                    backgroundColor={"white"}
+                    borderRadius={0}
+                    borderWidth={2}
+                    required
+                    name="stype"
+                  >
+                    <option value="Primary">Primary</option>
+                    <option value="High School">High School</option>
+                    <option value="Senior High School">
+                      Senior High School
+                    </option>
+                    <option value="College">College</option>
+                  </Select>
+                </Box>
+
+                <Box mb={2}>
+                  <AddCourse
+                    courses={courses}
+                    coursesCount={coursesCount}
+                    setcoursesCount={setcoursesCount}
+                    setCourses={setCourses}
+                  />
                 </Box>
 
                 <Box mt={5}>

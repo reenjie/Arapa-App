@@ -21,6 +21,7 @@ import {
   Text,
   Input,
   Textarea,
+  Select,
 } from "@chakra-ui/react";
 import {
   collection,
@@ -49,6 +50,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
       Description: e.target.schooldescription.value,
       Name: e.target.schoolname.value,
       Weblink: e.target.schoolwebsite.value,
+      SchoolType: e.target.schooltype.value,
     });
 
     await updateDoc(User, {
@@ -94,6 +96,19 @@ function RenderPage({ ID, data, type, readonly, users }) {
                           readOnly={readonly ? true : false}
                           cursor={readonly ? "default" : "text"}
                         />
+                      </Box>
+
+                      <Box p={5}>
+                        <Text fontWeight={"bold"}>Courses Offered</Text>
+                        <ul>
+                          {data.Courses.map((row) => {
+                            return (
+                              <>
+                                <li>{row.value}</li>
+                              </>
+                            );
+                          })}
+                        </ul>
                       </Box>
                     </Stack>
 
@@ -179,6 +194,26 @@ function RenderPage({ ID, data, type, readonly, users }) {
                   />
                 </Box>
 
+                <Box mb={2}>
+                  <Select
+                    placeholder="-- Select Type --"
+                    backgroundColor={"white"}
+                    borderRadius={0}
+                    borderWidth={2}
+                    required
+                    name="schooltype"
+                    defaultValue={data.SchoolType}
+                    disabled={readonly ? true : false}
+                    cursor={readonly ? "default" : "text"}
+                  >
+                    <option value="Primary">Primary</option>
+                    <option value="High School">High School</option>
+                    <option value="Senior High School">
+                      Senior High School
+                    </option>
+                    <option value="College">College</option>
+                  </Select>
+                </Box>
                 <Box>
                   <Text size={"md"} fontSize="16">
                     User Full name :

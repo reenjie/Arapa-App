@@ -135,7 +135,7 @@
     background-color: rgb(127, 192, 192);
     position: fixed;
     top: 0;
-    z-index: 2;
+    z-index: 9999;
     
 
   }
@@ -143,6 +143,20 @@
     height: 100vh;
     width: 100%;
     background-color: rgb(199, 219, 235);
+  }
+
+  .searchmain {
+    height: 100vh;
+    width: 100%;
+    
+  }
+  .searchBody{
+    position: absolute;
+    top: 10%;
+    padding: 5px;
+    width: 100%;
+   
+   
   }
   .MainBody{
     position: absolute;

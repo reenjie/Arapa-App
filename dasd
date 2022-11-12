@@ -1,0 +1,56 @@
+[33mcommit 2a2919faa6261ed478d84aed72d5b670c409e612[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Reenjay <reenjie17@gmail.com>
+Date:   Fri Nov 11 21:21:22 2022 +0800
+
+    Added Users tab,and Account Edit Info
+
+[33mcommit ebc29904a34e12da5a70bc20bec723756196b043[m
+Merge: 201eda5 ec6ab02
+Author: Reenjay <reenjie17@gmail.com>
+Date:   Thu Nov 10 21:57:27 2022 +0800
+
+    Merge branch 'main' of https://github.com/reenjie/Arapa-app
+
+[33mcommit 201eda5b44ba2c979c73cd169aea0755ccb379a7[m
+Author: Reenjay <reenjie17@gmail.com>
+Date:   Thu Nov 10 21:57:11 2022 +0800
+
+    11/10
+
+[33mcommit ec6ab025f5c44b83fa7337cf1da8ca7524fad842[m
+Author: Reenjay Caimor <103355053+reenjie@users.noreply.github.com>
+Date:   Tue Nov 8 21:18:54 2022 +0800
+
+    Update README.md
+    
+    Updated
+
+[33mcommit b8f309d45d8d2e7f36bef23f04d6b9578e726b68[m
+Author: Reenjay <reenjie17@gmail.com>
+Date:   Sun Nov 6 18:27:55 2022 +0800
+
+    11/6/2022
+
+[33mcommit 2765ac0de03795536149119f8099cb4ec5b53f94[m
+Author: Reenjay <reenjie17@gmail.com>
+Date:   Sat Nov 5 22:27:46 2022 +0800
+
+    finish register, Working on Edit
+
+[33mcommit bda426a7e70cc314d6c5131a68a3b9c23f2d412d[m
+Author: Reenjay <reenjie17@gmail.com>
+Date:   Sat Nov 5 15:47:33 2022 +0800
+
+    11/5
+
+[33mcommit 6675fcf1b1f77ed22a69b8030b83fc03f84145f1[m
+Author: Reenjay <reenjie17@gmail.com>
+Date:   Sun Sep 11 15:04:56 2022 +0800
+
+    initial commit
+
+[33mcommit 340b05fc2996898b1dd2ef07f8a8ef49c5640fae[m
+Author: Reenjay <reenjie17@gmail.com>
+Date:   Sun Sep 11 15:04:30 2022 +0800
+
+    first commit
