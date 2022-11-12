@@ -42,9 +42,31 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import Charts from "./Charts";
 
-function RenderPage() {
+function RenderPage({ pending }) {
   const redirect = RedirectifAuth();
+  const [schools, setSchool] = useState([]);
+  const [user, setUser] = useState([]);
+
+  const userd = [];
+  const schoold = [];
+  const display = async () => {
+    const firestoreData = await getDocs(
+      query(collection(db, "Schools"), where("status", "==", 1))
+    );
+
+    setSchool(firestoreData);
+    const firestoreUserData = await getDocs(
+      collection(db, "Users"),
+      where("usertype", "==", 1)
+    );
+    setUser(firestoreUserData);
+  };
+
+  useEffect(() => {
+    display();
+  }, []);
 
   return (
     <div>
@@ -64,7 +86,7 @@ function RenderPage() {
                   <Text fontWeight={"bold"} color={"green.600"}>
                     Approved Schools
                   </Text>
-                  <Heading color={"green.700"}>5</Heading>
+                  <Heading color={"green.700"}>{schools.size}</Heading>
                 </Box>
                 <Spacer />
                 <Text fontSize={35} color={"gray.500"}>
@@ -87,7 +109,7 @@ function RenderPage() {
                   <Text fontWeight={"bold"} color={"red.600"}>
                     Pending Schools
                   </Text>
-                  <Heading color={"red.700"}>20</Heading>
+                  <Heading color={"red.700"}>{pending.size}</Heading>
                 </Box>
                 <Spacer />
                 <Text fontSize={35} color={"gray.500"}>
@@ -110,7 +132,7 @@ function RenderPage() {
                   <Text fontWeight={"bold"} color={"blue.600"}>
                     School Registered
                   </Text>
-                  <Heading color={"blue.700"}>20</Heading>
+                  <Heading color={"blue.700"}>{schools.size}</Heading>
                 </Box>
                 <Spacer />
                 <Text fontSize={35} color={"gray.500"}>
@@ -133,7 +155,7 @@ function RenderPage() {
                   <Text fontWeight={"bold"} color={"teal.600"}>
                     All Users
                   </Text>
-                  <Heading color={"teal.700"}>20</Heading>
+                  <Heading color={"teal.700"}>{user.size}</Heading>
                 </Box>
                 <Spacer />
                 <Text fontSize={35} color={"gray.500"}>
@@ -144,7 +166,14 @@ function RenderPage() {
           </GridItem>
         </Grid>
         {/* MAin */}
-        <Box mt={10}>CHARTS</Box>
+        <Box mt={10}>
+          <Charts
+            usercount={user.size}
+            schoolregistered={schools.size}
+            pending={pending.size}
+            approved={schools.size}
+          />
+        </Box>
       </Container>
     </div>
   );
@@ -172,7 +201,7 @@ function Dashboard(props) {
         Sidebar_elements={
           <Sidebar selected={props.selected} pending={pendingdata} />
         }
-        Page_Contents={<RenderPage />}
+        Page_Contents={<RenderPage pending={pendingdata} />}
         Page_title="DASHBOARD"
       />
     </>
