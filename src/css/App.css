@@ -24,7 +24,7 @@
      box-shadow: 0 4px 4px 0 rgba(71, 69, 69, 0.2), 0 3px 10px 0 rgba(128, 124, 124, 0.19);
     position: fixed;
   
-    z-index: 1;
+    z-index: 9999;
     transition: all ease 0.5s;
   }
 

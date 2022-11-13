@@ -32,6 +32,7 @@ import Signout from "./auth/Signout";
 import Userdata from "./auth/Userdata";
 import RedirectifAuth from "./auth/RedirectifAuth";
 import ChangeCourse from "./ChangeCourse";
+import Map from "./admin/Map";
 
 import {
   collection,
@@ -53,8 +54,11 @@ function Account() {
   const [school, setSchool] = useState([]);
   const [newpass, setNewpass] = useState("");
   const [fetch, setFetch] = useState(false);
-
+  const [longitude, setLongitude] = useState();
+  const [marker, setMarker] = useState(true);
+  const [latitude, setLatitude] = useState();
   const [courses, setCourses] = useState([]);
+  const [markerdrag, setMarkerdrag] = useState(false);
 
   const fetchSchool = async () => {
     const firestoreData = await getDocs(collection(db, "Schools"));
@@ -62,9 +66,29 @@ function Account() {
   };
 
   const dData = [];
+  const schdata = [];
   useEffect(() => {
     fetchSchool();
   }, [fetch]);
+
+  const UpdateMap = async () => {
+    const TheSchoolid = data.SchooliD;
+    const Map = [
+      {
+        Lat: latitude,
+        Lng: longitude,
+      },
+    ];
+    const Schools = doc(db, "Schools", TheSchoolid);
+
+    await updateDoc(Schools, {
+      Map: Map,
+    });
+  };
+  useEffect(() => {
+    UpdateMap();
+    setMarkerdrag(false);
+  }, [markerdrag]);
 
   const handleChange = async (e) => {
     const typeofdata = e.currentTarget.dataset.type;
@@ -138,6 +162,7 @@ function Account() {
       {school.forEach((doc) => {
         if (data.SchooliD == doc.id) {
           // setCourses(doc.data().Courses);
+
           dData.push(
             <>
               <div className="accbody">
@@ -236,13 +261,15 @@ function Account() {
 
                         <Box p={5}>
                           <ul>
-                            {doc.data().Courses.map((row) => {
-                              return (
-                                <>
-                                  <li>{row.value}</li>
-                                </>
-                              );
-                            })}
+                            {doc.data().Courses
+                              ? doc.data().Courses.map((row) => {
+                                  return (
+                                    <>
+                                      <li>{row.value}</li>
+                                    </>
+                                  );
+                                })
+                              : null}
                           </ul>
 
                           <ChangeCourse setFetch={setFetch} schoolid={doc.id} />
@@ -274,13 +301,19 @@ function Account() {
                     <Box>
                       <Stack direction={"column"}>
                         <Box bg={"blackAlpha.500"} w="100%" height="300px">
-                          Map Heere
+                          <Map
+                            viewOnly={false}
+                            longitude={doc.data().Map[0].Lng}
+                            setLongitude={setLongitude}
+                            latitude={doc.data().Map[0].Lat}
+                            setLatitude={setLatitude}
+                            marker={marker}
+                            setMarker={setMarker}
+                            markerdrag={markerdrag}
+                            setMarkerdrag={setMarkerdrag}
+                          />
                         </Box>
                         <Box w="100%">
-                          <Button variant={"solid"} bg="blue.300" size={"sm"}>
-                            Pin Location
-                          </Button>
-
                           <Box mt={5}>
                             <Box>
                               <Text size={"md"} fontSize="16">

@@ -24,17 +24,22 @@ import {
   AlertTitle,
   AlertDescription,
 } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
 import db from "../../firebase-config";
 import { v4 as uuid } from "uuid";
 import swal from "sweetalert";
 import AddCourse from "./AddCourse";
+import Map from "../admin/Map";
 function Register() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [coursesCount, setcoursesCount] = useState();
-
+  const [longitude, setLongitude] = useState();
+  const [marker, setMarker] = useState(false);
+  const [latitude, setLatitude] = useState();
+  const toast = useToast();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -44,7 +49,22 @@ function Register() {
     const userpass = e.target.userpassword.value;
     const reenterpass = e.target.userreenterpassword.value;
 
-    if (userpass == reenterpass) {
+    const Map = [
+      {
+        Lat: latitude,
+        Lng: longitude,
+      },
+    ];
+    if (!longitude && !latitude) {
+      toast({
+        title: "Map Location is Required!",
+        description: "Please pin your location in the MAP",
+        status: "error",
+
+        duration: 9000,
+        isClosable: true,
+      });
+    } else if (userpass == reenterpass) {
       const result = await setDoc(doc(db, "Schools", school_unique_id), {
         Address: e.target.schooladdress.value,
         Contact: e.target.usercontact.value,
@@ -52,6 +72,7 @@ function Register() {
         Email: e.target.schoolemail.value,
         Name: e.target.schoolname.value,
         Weblink: e.target.schoolwebsite.value,
+        Map: Map,
         SchoolType: e.target.stype.value,
         Courses: courses,
         mapID: "",
@@ -196,13 +217,17 @@ function Register() {
               <Box>
                 <Stack direction={"column"}>
                   <Box bg={"blackAlpha.500"} w="100%" height="300px">
-                    Map Heere
+                    <Map
+                      viewOnly={false}
+                      longitude={longitude}
+                      setLongitude={setLongitude}
+                      latitude={latitude}
+                      setLatitude={setLatitude}
+                      marker={marker}
+                      setMarker={setMarker}
+                    />
                   </Box>
                   <Box w="100%">
-                    <Button variant={"solid"} bg="blue.300" size={"sm"}>
-                      Pin Location
-                    </Button>
-
                     {/*   <Stack mt={2} direction={"row"} width="100%" columns={2}>
                     <Box width="25%">
                       <Text size={"md"} fontSize="16">

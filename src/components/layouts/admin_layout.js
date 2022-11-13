@@ -34,7 +34,7 @@ function AdminLayout(props) {
   return (
     <>
       <div id="sideBar">{props.Sidebar_elements}</div>
-      <div className="topbar">
+      <div className="topbar" style={{ zIndex: "6" }}>
         <button
           id="btnopen_close"
           colorScheme="teal"
@@ -45,10 +45,10 @@ function AdminLayout(props) {
         >
           <HamburgerIcon id="humicon" />
         </button>
-       
-       
-     <span className="title" style={{fontWeight:'bold',color:'gray'}}>{props.Page_title}</span> 
-   
+
+        <span className="title" style={{ fontWeight: "bold", color: "gray" }}>
+          {props.Page_title}
+        </span>
       </div>
       <div className="Wrap" id="wrap">
         <div id="mainPage">{props.Page_Contents}</div>

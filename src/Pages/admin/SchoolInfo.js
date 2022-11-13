@@ -34,14 +34,27 @@ import {
 import db from "../../firebase-config";
 import swal from "sweetalert";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import Map from "./Map";
 
 function RenderPage({ ID, data, type, readonly, users }) {
+  console.log(data);
+  const [longitude, setLongitude] = useState(data.Map[0].Lng);
+  const [marker, setMarker] = useState(true);
+  const [latitude, setLatitude] = useState(data.Map[0].Lat);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const School = doc(db, "Schools", ID);
     const User = doc(db, "Users", users[0].id);
+
+    const Map = [
+      {
+        Lat: latitude,
+        Lng: longitude,
+      },
+    ];
 
     await updateDoc(School, {
       Email: e.target.schoolemail.value,
@@ -50,6 +63,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
       Description: e.target.schooldescription.value,
       Name: e.target.schoolname.value,
       Weblink: e.target.schoolwebsite.value,
+      Map: Map,
       SchoolType: e.target.schooltype.value,
     });
 
@@ -76,7 +90,16 @@ function RenderPage({ ID, data, type, readonly, users }) {
               <Box>
                 <Stack direction={"column"}>
                   <Box bg={"blackAlpha.500"} w="100%" height="300px">
-                    Map Heere
+                    <Map
+                      viewOnly={readonly ? true : false}
+                      longitude={longitude}
+                      setLongitude={setLongitude}
+                      latitude={latitude}
+                      setLatitude={setLatitude}
+                      marker={marker}
+                      setMarker={setMarker}
+                      readonly={readonly}
+                    />
                   </Box>
                   <Box w="100%">
                     <Stack direction={"column"} width="100%" columns={2}>
@@ -101,13 +124,15 @@ function RenderPage({ ID, data, type, readonly, users }) {
                       <Box p={5}>
                         <Text fontWeight={"bold"}>Courses Offered</Text>
                         <ul>
-                          {data.Courses.map((row) => {
-                            return (
-                              <>
-                                <li>{row.value}</li>
-                              </>
-                            );
-                          })}
+                          {data.Courses
+                            ? data.Courses.map((row) => {
+                                return (
+                                  <>
+                                    <li>{row.value}</li>
+                                  </>
+                                );
+                              })
+                            : null}
                         </ul>
                       </Box>
                     </Stack>

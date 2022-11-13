@@ -31,6 +31,7 @@ import {
 import swal from "sweetalert";
 import { async } from "@firebase/util";
 import RedirectifAuth from "../auth/RedirectifAuth";
+import Map from "./Map";
 
 function RenderPage({ user, data, setFetch }) {
   const redirect = RedirectifAuth();
@@ -67,8 +68,15 @@ function RenderPage({ user, data, setFetch }) {
   return (
     <div>
       <Stack>
-        <Box bg="white" shadow={"md"} height={"250px"} p={10} mt={10}>
-          Map here
+        <Box
+          bg="white"
+          shadow={"md"}
+          height={"500px"}
+          p={10}
+          mt={10}
+          zIndex={"1"}
+        >
+          <Map viewOnly={true} />
         </Box>
 
         <Box bg="white" mt={10}>
