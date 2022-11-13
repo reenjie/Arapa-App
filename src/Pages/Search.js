@@ -34,12 +34,16 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import Map from "./admin/Map";
 function Search(props) {
   const location = useLocation();
   const navigate = useNavigate();
   const [data, setData] = useState(location.state.data);
+  const [longitude, setLongitude] = useState();
+  const [marker, setMarker] = useState(true);
+  const [latitude, setLatitude] = useState();
+  const [markerdrag, setMarkerdrag] = useState(false);
 
-  console.log(data);
   return (
     <>
       <div className="header">
@@ -194,7 +198,20 @@ function Search(props) {
                     </Container>
                   </GridItem>
                   <GridItem colSpan={[12, 12, 12, 6]}>
-                    <Box bg={"gray.600"} p={5}></Box>
+                    <Box bg={"gray.600"} height={550}>
+                      <Map
+                        viewOnly={true}
+                        longitude={row.data.contents.Map[0].Lng}
+                        setLongitude={setLongitude}
+                        latitude={row.data.contents.Map[0].Lat}
+                        setLatitude={setLatitude}
+                        // marker={marker}
+                        // setMarker={setMarker}
+                        // markerdrag={markerdrag}
+                        // setMarkerdrag={setMarkerdrag}
+                        readonly={true}
+                      />
+                    </Box>
                   </GridItem>
                 </Grid>
               </>

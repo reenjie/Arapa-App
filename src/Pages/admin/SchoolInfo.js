@@ -37,7 +37,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Map from "./Map";
 
 function RenderPage({ ID, data, type, readonly, users }) {
-  console.log(data);
   const [longitude, setLongitude] = useState(data.Map[0].Lng);
   const [marker, setMarker] = useState(true);
   const [latitude, setLatitude] = useState(data.Map[0].Lat);
