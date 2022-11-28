@@ -22,6 +22,7 @@ import {
   Input,
   Textarea,
   Select,
+  Image,
 } from "@chakra-ui/react";
 import {
   collection,
@@ -35,16 +36,19 @@ import db from "../../firebase-config";
 import swal from "sweetalert";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Map from "./Map";
+import Picture from "../layouts/Picture";
 
 function RenderPage({ ID, data, type, readonly, users }) {
   const [longitude, setLongitude] = useState(data.Map[0].Lng);
   const [marker, setMarker] = useState(true);
   const [latitude, setLatitude] = useState(data.Map[0].Lat);
+  const [load, setLoad] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoad(true);
     const School = doc(db, "Schools", ID);
     const User = doc(db, "Users", users[0].id);
 
@@ -70,6 +74,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
       Contact: e.target.usercontact.value,
       Name: e.target.username.value,
     }).then((e) => {
+      setLoad(false);
       swal(
         "Updated Successfully",
         "Data has been updated Successfully!",
@@ -135,7 +140,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
                         </ul>
                       </Box>
                     </Stack>
-
+                    {/* 
                     <Box mt={5}>
                       <Text color={"teal.600"} mb={10} fontSize="16">
                         School IDs (For Verification)
@@ -144,7 +149,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
                         <Box bg="tomato" height={"80px"} p="10"></Box>
                         <Box bg="tomato" height={"80px"} p="10"></Box>
                       </Stack>
-                    </Box>
+                    </Box> */}
                   </Box>
                 </Stack>
               </Box>
@@ -274,16 +279,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
                   />
                 </Box>
 
-                <Box mt={5}>
-                  <Text color={"teal.600"} mb={10} fontSize="16">
-                    School Pictures 2-3
-                  </Text>
-                  <Stack direction={"row"} spacing={4}>
-                    <Box bg="tomato" height={"80px"} p="10"></Box>
-                    <Box bg="tomato" height={"80px"} p="10"></Box>
-                    <Box bg="tomato" height={"80px"} p="10"></Box>
-                  </Stack>
-                </Box>
+                <Picture Files={data.Files} />
 
                 <Box mt="5" float={"right"}>
                   {type == "viewonly" ? null : (
@@ -292,6 +288,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
                       variant={"solid"}
                       colorScheme="teal"
                       type="submit"
+                      isLoading={load}
                     >
                       Save
                     </Button>

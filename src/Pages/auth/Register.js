@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../../css/App.css";
 import { storage } from "../../firebase-config";
 import {
@@ -49,8 +49,11 @@ function Register() {
   const [percent, setPercent] = useState(0);
   const toast = useToast();
   const [toupload, setToupload] = useState([]);
+  const [load, setLoad] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoad(true);
 
     const school_unique_id = uuid();
     const user_unique_id = uuid();
@@ -74,10 +77,12 @@ function Register() {
         isClosable: true,
       });
     } else if (userpass == reenterpass) {
+      const upl = [];
       if (selectedFiles.length >= 1) {
         selectedFiles.map((f) => {
           const storageRef = ref(storage, f.name);
           const uploadTask = uploadBytesResumable(storageRef, f);
+
           uploadTask.on(
             "state_changed",
             (snapshot) => {
@@ -92,46 +97,48 @@ function Register() {
             () => {
               // download url
               getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                toupload.push(url);
+                toupload.push({ url });
               });
             }
           );
         });
+        setTimeout(async () => {
+          const result = await setDoc(doc(db, "Schools", school_unique_id), {
+            Address: e.target.schooladdress.value,
+            Contact: e.target.usercontact.value,
+            Description: e.target.schooldescription.value,
+            Email: e.target.schoolemail.value,
+            Name: e.target.schoolname.value,
+            Weblink: e.target.schoolwebsite.value,
+            Map: Map,
+            SchoolType: e.target.stype.value,
+            Courses: courses,
+            Files: toupload,
+            mapID: "",
+            status: 0,
+          }).then(() => {
+            //school_unique_id
 
-        console.log(toupload);
-        // const result = await setDoc(doc(db, "Schools", school_unique_id), {
-        //   Address: e.target.schooladdress.value,
-        //   Contact: e.target.usercontact.value,
-        //   Description: e.target.schooldescription.value,
-        //   Email: e.target.schoolemail.value,
-        //   Name: e.target.schoolname.value,
-        //   Weblink: e.target.schoolwebsite.value,
-        //   Map: Map,
-        //   SchoolType: e.target.stype.value,
-        //   Courses: courses,
-        //   Files: toupload,
-        //   mapID: "",
-        //   status: 0,
-        // }).then(() => {
-        //   //school_unique_id
-
-        //   setDoc(doc(db, "Users", user_unique_id), {
-        //     Contact: e.target.usercontact.value,
-        //     Email: e.target.useremail.value,
-        //     Name: e.target.username.value,
-        //     Password: e.target.userpassword.value,
-        //     SchooliD: school_unique_id,
-        //     usertype: 0,
-        //   }).then(() => {
-        //     swal(
-        //       "Registered Successfully",
-        //       "You are Registered Successfully!",
-        //       "success"
-        //     ).then(() => {
-        //       navigate("/Account/Info");
-        //     });
-        //   });
-        // });
+            setDoc(doc(db, "Users", user_unique_id), {
+              Contact: e.target.usercontact.value,
+              Email: e.target.useremail.value,
+              Name: e.target.username.value,
+              Password: e.target.userpassword.value,
+              SchooliD: school_unique_id,
+              usertype: 0,
+            }).then(() => {
+              swal(
+                "Registered Successfully",
+                "You are Registered Successfully!",
+                "success"
+              ).then(() => {
+                navigate("/Account/Info");
+              });
+            });
+          });
+          setToupload("");
+          setLoad(false);
+        }, 3000);
       } else {
         toast({
           title: "IMAGE REQUIRED!",
@@ -411,6 +418,7 @@ function Register() {
                             colorScheme={"facebook"}
                             size="md"
                             type={"submit"}
+                            isLoading={load}
                           >
                             Register
                           </Button>

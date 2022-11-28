@@ -35,6 +35,7 @@ import {
   where,
 } from "firebase/firestore";
 import Map from "./admin/Map";
+import Picture from "./layouts/Picture";
 function Search(props) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -194,6 +195,7 @@ function Search(props) {
                             </Box>
                           </Stack>
                         </Box>
+                        <Picture Files={row.data.contents.Files} />
                       </Box>
                     </Container>
                   </GridItem>

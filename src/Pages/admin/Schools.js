@@ -36,6 +36,7 @@ import Map from "./Map";
 function RenderPage({ user, data, setFetch }) {
   const redirect = RedirectifAuth();
   const navigate = useNavigate();
+  const [load, setLoad] = useState(false);
   const dData = [];
   const dUser = [];
 
@@ -107,14 +108,19 @@ function RenderPage({ user, data, setFetch }) {
                             variant={"ghost"}
                             size="sm"
                             color={"green.500"}
+                            isLoading={load}
                             onClick={() => {
-                              navigate("/Admin/Schoolinfo", {
-                                state: {
-                                  id: doc.id,
-                                  data: doc.data(),
-                                  user: dUser,
-                                },
-                              });
+                              setLoad(true);
+                              setTimeout(() => {
+                                navigate("/Admin/Schoolinfo", {
+                                  state: {
+                                    id: doc.id,
+                                    data: doc.data(),
+                                    user: dUser,
+                                  },
+                                });
+                                setLoad(false);
+                              }, 4000);
                             }}
                           >
                             <i className="fas fa-edit"></i>
