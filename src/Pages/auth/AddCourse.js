@@ -31,9 +31,20 @@ function AddCourse({ courses, setCourses, setcoursesCount, coursesCount }) {
   const handleChanges = (e) => {
     const value = e.target.value;
     const key = e.currentTarget.dataset.key;
-    setTempkey(key);
-    if (tempkey == key) {
-      courses[key] = value;
+
+    if (courses.length >= 1) {
+      if (courses.filter((x) => x.id === key).length == 1) {
+        courses
+          .filter((x) => x.id === key)
+          .map((td) => {
+            courses[td.id].value = value;
+          });
+      } else {
+        courses.push({
+          id: key,
+          value: value,
+        });
+      }
     } else {
       courses.push({
         id: key,
@@ -73,6 +84,7 @@ function AddCourse({ courses, setCourses, setcoursesCount, coursesCount }) {
           } else {
             setcoursesCount(e.target.value);
             setCourses([]);
+            setTempkey("");
             for (let index = 0; index < coursesCount; index++) {
               document.getElementById(index).value = "";
             }

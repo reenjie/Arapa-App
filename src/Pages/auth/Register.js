@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "../../css/App.css";
+import { storage } from "../../firebase-config";
 import {
   Image,
   Box,
@@ -32,14 +33,22 @@ import { v4 as uuid } from "uuid";
 import swal from "sweetalert";
 import AddCourse from "./AddCourse";
 import Map from "../admin/Map";
+import { FiUpload } from "react-icons/fi";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 function Register() {
+  const fileRef = useRef();
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [coursesCount, setcoursesCount] = useState();
   const [longitude, setLongitude] = useState();
   const [marker, setMarker] = useState(false);
   const [latitude, setLatitude] = useState();
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [validate, setValidate] = useState(false);
+  const [fileLimit, setFileLimit] = useState(false);
+  const [percent, setPercent] = useState(0);
   const toast = useToast();
+  const [toupload, setToupload] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -65,38 +74,74 @@ function Register() {
         isClosable: true,
       });
     } else if (userpass == reenterpass) {
-      const result = await setDoc(doc(db, "Schools", school_unique_id), {
-        Address: e.target.schooladdress.value,
-        Contact: e.target.usercontact.value,
-        Description: e.target.schooldescription.value,
-        Email: e.target.schoolemail.value,
-        Name: e.target.schoolname.value,
-        Weblink: e.target.schoolwebsite.value,
-        Map: Map,
-        SchoolType: e.target.stype.value,
-        Courses: courses,
-        mapID: "",
-        status: 0,
-      }).then(() => {
-        //school_unique_id
+      if (selectedFiles.length >= 1) {
+        selectedFiles.map((f) => {
+          const storageRef = ref(storage, f.name);
+          const uploadTask = uploadBytesResumable(storageRef, f);
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const percent = Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              );
 
-        setDoc(doc(db, "Users", user_unique_id), {
-          Contact: e.target.usercontact.value,
-          Email: e.target.useremail.value,
-          Name: e.target.username.value,
-          Password: e.target.userpassword.value,
-          SchooliD: school_unique_id,
-          usertype: 0,
-        }).then(() => {
-          swal(
-            "Registered Successfully",
-            "You are Registered Successfully!",
-            "success"
-          ).then(() => {
-            navigate("/Account/Info");
-          });
+              // update progress
+              setPercent(percent);
+            },
+            (err) => console.log(err),
+            () => {
+              // download url
+              getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                toupload.push(url);
+              });
+            }
+          );
         });
-      });
+
+        console.log(toupload);
+        // const result = await setDoc(doc(db, "Schools", school_unique_id), {
+        //   Address: e.target.schooladdress.value,
+        //   Contact: e.target.usercontact.value,
+        //   Description: e.target.schooldescription.value,
+        //   Email: e.target.schoolemail.value,
+        //   Name: e.target.schoolname.value,
+        //   Weblink: e.target.schoolwebsite.value,
+        //   Map: Map,
+        //   SchoolType: e.target.stype.value,
+        //   Courses: courses,
+        //   Files: toupload,
+        //   mapID: "",
+        //   status: 0,
+        // }).then(() => {
+        //   //school_unique_id
+
+        //   setDoc(doc(db, "Users", user_unique_id), {
+        //     Contact: e.target.usercontact.value,
+        //     Email: e.target.useremail.value,
+        //     Name: e.target.username.value,
+        //     Password: e.target.userpassword.value,
+        //     SchooliD: school_unique_id,
+        //     usertype: 0,
+        //   }).then(() => {
+        //     swal(
+        //       "Registered Successfully",
+        //       "You are Registered Successfully!",
+        //       "success"
+        //     ).then(() => {
+        //       navigate("/Account/Info");
+        //     });
+        //   });
+        // });
+      } else {
+        toast({
+          title: "IMAGE REQUIRED!",
+          description: "Upload atleast 1 or more Images. Maximum upload : 3",
+          status: "error",
+
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     } else {
       swal(
         "Password Does not Match!",
@@ -104,6 +149,35 @@ function Register() {
         "error"
       ).then(() => {});
     }
+  };
+
+  const Max_Count = 3;
+  const handleFileUpload = (files) => {
+    const uploaded = [...selectedFiles];
+    let limitExceeded = false;
+
+    files.some((file) => {
+      if (uploaded.findIndex((f) => f.name === file.name) === -1) {
+        uploaded.push(file);
+        if (uploaded.length === Max_Count) setFileLimit(true);
+        if (uploaded.length > Max_Count) {
+          console.log(`you can only add maximum file of ${Max_Count} files`);
+          setFileLimit(false);
+          limitExceeded = true;
+          return true;
+        }
+      }
+    });
+
+    if (!limitExceeded) {
+      setSelectedFiles(uploaded);
+      setValidate(false);
+    }
+  };
+
+  const handleFileEvent = (e) => {
+    const chosenFiles = Array.prototype.slice.call(e.target.files);
+    handleFileUpload(chosenFiles);
   };
 
   return (
@@ -203,13 +277,42 @@ function Register() {
                 </Box>
 
                 <Box mt={5}>
+                  <Input
+                    type="file"
+                    display={"none"}
+                    accept="image/*"
+                    onChange={handleFileEvent}
+                    ref={fileRef}
+                    multiple={true}
+                  />
+                  <Box
+                    p={5}
+                    bg={"green.50"}
+                    cursor={"pointer"}
+                    onClick={() => {
+                      fileRef.current.click();
+                    }}
+                  >
+                    <Center>
+                      <FiUpload />
+                      <Text fontSize={13}>Upload Photo </Text>
+                    </Center>
+                  </Box>
                   <Text color={"teal.600"} mb={10} fontSize="16">
                     School Pictures 2-3
                   </Text>
+                  <Button
+                    onClick={() => {
+                      console.log(selectedFiles);
+                      setToupload([]);
+                    }}
+                  >
+                    Check files
+                  </Button>
                   <Stack direction={"row"} spacing={4}>
+                    {/* <Box bg="tomato" height={"80px"} p="10"></Box>
                     <Box bg="tomato" height={"80px"} p="10"></Box>
-                    <Box bg="tomato" height={"80px"} p="10"></Box>
-                    <Box bg="tomato" height={"80px"} p="10"></Box>
+                    <Box bg="tomato" height={"80px"} p="10"></Box> */}
                   </Stack>
                 </Box>
               </Box>
