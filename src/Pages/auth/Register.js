@@ -158,13 +158,17 @@ function Register() {
           duration: 9000,
           isClosable: true,
         });
+
+        setLoad(false);
       }
     } else {
       swal(
         "Password Does not Match!",
         "Please make sure Reentered password match your first password",
         "error"
-      ).then(() => {});
+      ).then(() => {
+        setLoad(false);
+      });
     }
   };
 
