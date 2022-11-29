@@ -41,6 +41,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 function Register() {
   const fileRef = useRef();
+  const logoref = useRef();
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [coursesCount, setcoursesCount] = useState();
@@ -54,6 +55,9 @@ function Register() {
   const toast = useToast();
   const [toupload, setToupload] = useState([]);
   const [load, setLoad] = useState(false);
+  const [logo, setLogo] = useState("");
+  const [lgpath, setPath] = useState();
+  const [svlogo, setSvlogo] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,7 +86,7 @@ function Register() {
       });
     } else if (userpass == reenterpass) {
       const upl = [];
-      if (selectedFiles.length >= 1) {
+      if (selectedFiles.length >= 1 && logo != "") {
         selectedFiles.map((f) => {
           const storageRef = ref(storage, f.name);
           const uploadTask = uploadBytesResumable(storageRef, f);
@@ -106,8 +110,10 @@ function Register() {
             }
           );
         });
+
         setTimeout(async () => {
           const result = await setDoc(doc(db, "Schools", school_unique_id), {
+            Logo: svlogo,
             Address: e.target.schooladdress.value,
             Contact: e.target.usercontact.value,
             Description: e.target.schooldescription.value,
@@ -142,7 +148,7 @@ function Register() {
           });
           setToupload("");
           setLoad(false);
-        }, 3000);
+        }, 4000);
       } else {
         toast({
           title: "IMAGE REQUIRED!",
@@ -201,6 +207,34 @@ function Register() {
     handleFileUpload(chosenFiles);
   };
 
+  const handleschoolLogo = (path) => {
+    setPath(URL.createObjectURL(path.target.files[0]));
+    setLogo(path.target.files[0]);
+
+    const logostore = ref(storage, path.target.files[0].name);
+    const uploadlogo = uploadBytesResumable(logostore, path.target.files[0]);
+
+    uploadlogo.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+
+        // update progress
+        setPercent(percent);
+      },
+      (err) => console.log(err),
+      () => {
+        // download url
+        getDownloadURL(uploadlogo.snapshot.ref).then((url) => {
+          setSvlogo(url);
+          console.log(url);
+        });
+      }
+    );
+  };
+
   return (
     <>
       <form method={"post"} onSubmit={handleSubmit}>
@@ -218,6 +252,66 @@ function Register() {
                 <Heading mb="5" color={"gray.500"} as="h3" size="lg">
                   Register
                 </Heading>
+
+                <Input
+                  type={"file"}
+                  ref={logoref}
+                  accept="image/png, image/jpeg"
+                  display={"none"}
+                  onChange={handleschoolLogo}
+                />
+                {logo ? (
+                  <>
+                    <Center>
+                      <Box>
+                        <Image
+                          borderRadius="full"
+                          boxSize="150px"
+                          src={lgpath}
+                          alt=""
+                        />
+                        <br />
+                        <Center>
+                          <Button
+                            size={"sm"}
+                            onClick={() => {
+                              setLogo("");
+                            }}
+                          >
+                            change Logo
+                          </Button>
+                        </Center>
+                      </Box>
+                    </Center>
+                  </>
+                ) : (
+                  <Box>
+                    <Center>
+                      <Box
+                        p={30}
+                        w={100}
+                        h={100}
+                        borderRadius={50}
+                        bg={"gray.400"}
+                        cursor={"pointer"}
+                        onClick={() => {
+                          logoref.current.click();
+                        }}
+                      >
+                        <Center>
+                          <FiUpload
+                            style={{
+                              fontSize: "25px",
+                              color: "white",
+                              textAlign: "center",
+                            }}
+                          />
+                        </Center>
+                      </Box>
+                    </Center>
+                    <Text textAlign={"center"}>School Logo</Text>
+                  </Box>
+                )}
 
                 <Text
                   mt={4}

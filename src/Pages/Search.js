@@ -36,6 +36,7 @@ import {
 } from "firebase/firestore";
 import Map from "./admin/Map";
 import Picture from "./layouts/Picture";
+import SchoolLogo from "./layouts/SchoolLogo";
 function Search(props) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -89,13 +90,7 @@ function Search(props) {
                         p={5}
                       >
                         <Stack direction={"row"}>
-                          <Image
-                            boxSize="100px"
-                            objectFit="cover"
-                            src="https://bit.ly/dan-abramov"
-                            alt="Dan Abramov"
-                          />
-
+                          <SchoolLogo logo={row.data.contents.Logo} />
                           <Heading size={"md"} marginLeft={5}>
                             {row.data.contents.Name}
                             <br />

@@ -37,6 +37,7 @@ import swal from "sweetalert";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Map from "./Map";
 import Picture from "../layouts/Picture";
+import SchoolLogo from "../layouts/SchoolLogo";
 
 function RenderPage({ ID, data, type, readonly, users }) {
   const [longitude, setLongitude] = useState(data.Map[0].Lng);
@@ -140,6 +141,8 @@ function RenderPage({ ID, data, type, readonly, users }) {
                         </ul>
                       </Box>
                     </Stack>
+
+                    <SchoolLogo logo={data.Logo} />
                     {/* 
                     <Box mt={5}>
                       <Text color={"teal.600"} mb={10} fontSize="16">
