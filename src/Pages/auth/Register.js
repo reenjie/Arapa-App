@@ -84,6 +84,7 @@ function Register() {
         duration: 9000,
         isClosable: true,
       });
+      setLoad(false);
     } else if (userpass == reenterpass) {
       const upl = [];
       if (selectedFiles.length >= 1 && logo != "") {
@@ -233,7 +234,6 @@ function Register() {
         // download url
         getDownloadURL(uploadlogo.snapshot.ref).then((url) => {
           setSvlogo(url);
-          console.log(url);
         });
       }
     );
