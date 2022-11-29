@@ -24,8 +24,11 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { AttachmentIcon } from "@chakra-ui/icons";
 import { Link, useNavigate } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
 import db from "../../firebase-config";
@@ -35,6 +38,7 @@ import AddCourse from "./AddCourse";
 import Map from "../admin/Map";
 import { FiUpload } from "react-icons/fi";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
 function Register() {
   const fileRef = useRef();
   const navigate = useNavigate();
@@ -168,9 +172,18 @@ function Register() {
         uploaded.push(file);
         if (uploaded.length === Max_Count) setFileLimit(true);
         if (uploaded.length > Max_Count) {
-          console.log(`you can only add maximum file of ${Max_Count} files`);
+          toast({
+            title: `File Upload Maximum limit Reached`,
+            description: `The number of photo can be save is ${Max_Count}`,
+            status: "error",
+
+            duration: 9000,
+            isClosable: true,
+          });
+
           setFileLimit(false);
           limitExceeded = true;
+
           return true;
         }
       }
@@ -183,6 +196,7 @@ function Register() {
   };
 
   const handleFileEvent = (e) => {
+    setSelectedFiles([]);
     const chosenFiles = Array.prototype.slice.call(e.target.files);
     handleFileUpload(chosenFiles);
   };
@@ -298,26 +312,39 @@ function Register() {
                     cursor={"pointer"}
                     onClick={() => {
                       fileRef.current.click();
+                      setSelectedFiles([]);
                     }}
                   >
                     <Center>
                       <FiUpload />
-                      <Text fontSize={13}>Upload Photo </Text>
+                      <Text fontSize={13}>
+                        {selectedFiles.length >= 1
+                          ? "Reselect Photo"
+                          : "Upload Photo "}{" "}
+                      </Text>
                     </Center>
                   </Box>
                   <Text color={"teal.600"} mb={10} fontSize="16">
                     School Pictures 2-3
                   </Text>
-                  <Button
-                    onClick={() => {
-                      console.log(selectedFiles);
-                      setToupload([]);
-                    }}
-                  >
-                    Check files
-                  </Button>
+
                   <Stack direction={"row"} spacing={4}>
-                    {/* <Box bg="tomato" height={"80px"} p="10"></Box>
+                    {selectedFiles.map((file) => {
+                      return (
+                        <>
+                          <Box
+                            w={"50"}
+                            bg="teal.100"
+                            p="3"
+                            borderRadius={10}
+                            border={"1px solid gray"}
+                          >
+                            <AttachmentIcon /> {file.name}
+                          </Box>
+                        </>
+                      );
+                    })}
+                    {/* 
                     <Box bg="tomato" height={"80px"} p="10"></Box>
                     <Box bg="tomato" height={"80px"} p="10"></Box> */}
                   </Stack>
