@@ -174,7 +174,6 @@ function RenderPage({ ID, data, type, readonly, users }) {
                     cursor={readonly ? "default" : "text"}
                   />
                 </Box>
-
                 <Box>
                   <Text size={"md"} fontSize="16">
                     School Address :
@@ -225,7 +224,6 @@ function RenderPage({ ID, data, type, readonly, users }) {
                     cursor={readonly ? "default" : "text"}
                   />
                 </Box>
-
                 <Box mb={2}>
                   <Select
                     placeholder="-- Select Type --"
@@ -263,7 +261,6 @@ function RenderPage({ ID, data, type, readonly, users }) {
                     cursor={readonly ? "default" : "text"}
                   />
                 </Box>
-
                 <Box>
                   <Text size={"md"} fontSize="16">
                     Contact :
@@ -281,9 +278,12 @@ function RenderPage({ ID, data, type, readonly, users }) {
                     cursor={readonly ? "default" : "text"}
                   />
                 </Box>
-
-                <Picture Files={data.Files} />
-
+                <Picture
+                  Files={data.Files}
+                  user="admin"
+                  IDpicture={data.IdPicture}
+                />
+                {console.log(data.IdPicture)}
                 <Box mt="5" float={"right"}>
                   {type == "viewonly" ? null : (
                     <Button

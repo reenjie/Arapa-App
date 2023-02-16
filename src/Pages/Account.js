@@ -33,6 +33,7 @@ import Userdata from "./auth/Userdata";
 import RedirectifAuth from "./auth/RedirectifAuth";
 import ChangeCourse from "./ChangeCourse";
 import Map from "./admin/Map";
+import Picture from "./layouts/Picture";
 
 import {
   collection,
@@ -80,7 +81,6 @@ function Account() {
       },
     ];
     const Schools = doc(db, "Schools", TheSchoolid);
-
     await updateDoc(Schools, {
       Map: Map,
     });
@@ -286,16 +286,12 @@ function Account() {
                         <AlertIcon />
                         To change Info just Click the data you wish to Update.
                       </Alert>
-                      <Box mt={5}>
-                        <Text color={"teal.600"} mb={10} fontSize="16">
-                          School Pictures 2-3
-                        </Text>
-                        <Stack direction={"row"} spacing={4}>
-                          <Box bg="tomato" height={"80px"} p="10"></Box>
-                          <Box bg="tomato" height={"80px"} p="10"></Box>
-                          <Box bg="tomato" height={"80px"} p="10"></Box>
-                        </Stack>
-                      </Box>
+                      <Picture
+                        Files={doc.data().Files}
+                        IDpicture={doc.data().IdPicture}
+                        dataid={doc.id}
+                        user="user"
+                      />
                     </Box>
 
                     <Box>

@@ -107,6 +107,13 @@ function RenderPage({ user, data, setFetch }) {
                           <Button
                             variant={"ghost"}
                             size="sm"
+                            color={"gray.500"}
+                          >
+                            <i className="fas fa-ban"></i>
+                          </Button>
+                          <Button
+                            variant={"ghost"}
+                            size="sm"
                             color={"green.500"}
                             isLoading={load}
                             onClick={() => {

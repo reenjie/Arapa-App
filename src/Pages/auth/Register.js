@@ -59,6 +59,8 @@ function Register() {
   const [lgpath, setPath] = useState();
   const [svlogo, setSvlogo] = useState("");
 
+  const [idPicture, setIdPicture] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoad(true);
@@ -125,6 +127,7 @@ function Register() {
             SchoolType: e.target.stype.value,
             Courses: courses,
             Files: toupload,
+            IdPicture: idPicture,
             mapID: "",
             status: 0,
           }).then(() => {
@@ -234,6 +237,33 @@ function Register() {
         // download url
         getDownloadURL(uploadlogo.snapshot.ref).then((url) => {
           setSvlogo(url);
+        });
+      }
+    );
+  };
+
+  const handleIDpicture = (path) => {
+    // setPath(URL.createObjectURL(path.target.files[0]));
+    // setLogo(path.target.files[0]);
+
+    const logostore = ref(storage, path.target.files[0].name);
+    const uploadlogo = uploadBytesResumable(logostore, path.target.files[0]);
+
+    uploadlogo.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+
+        // update progress
+        // setPercent(percent);
+      },
+      (err) => console.log(err),
+      () => {
+        // download url
+        getDownloadURL(uploadlogo.snapshot.ref).then((url) => {
+          setIdPicture(url);
         });
       }
     );
@@ -395,6 +425,18 @@ function Register() {
                   />
                 </Box>
 
+                <Text color={"teal.600"} mt={3} mb={3} fontSize="16">
+                  ID Picture
+                </Text>
+
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleIDpicture}
+                  multiple={false}
+                  mb={3}
+                />
+
                 <Box mt={5}>
                   <Input
                     type="file"
@@ -422,6 +464,7 @@ function Register() {
                       </Text>
                     </Center>
                   </Box>
+
                   <Text color={"teal.600"} mb={10} fontSize="16">
                     School Pictures 2-3
                   </Text>
