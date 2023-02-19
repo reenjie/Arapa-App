@@ -31,10 +31,51 @@ import {
   query,
   where,
 } from "firebase/firestore";
-
+import { useState, useEffect } from "react";
 const App = () => {
   const navigate = useNavigate();
+  const [search, setSearch] = useState();
+  const [school, setSchool] = useState([]);
+  const [output, setOutput] = useState([]);
+  const fetch = async () => {
+    const firestoreData = await getDocs(collection(db, "Schools"));
+    const data = [];
+    firestoreData.forEach((doc) => {
+      data.push([
+        {
+          id: doc.id,
+          contents: [doc.data()],
+        },
+      ]);
+    });
 
+    setSchool(data);
+  };
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  const handleChange = async (e) => {
+    const val = e.target.value;
+
+    if (val == "") {
+      setSearch("");
+      setOutput([]);
+    } else {
+      // const content = school.contents.filter((x) =>
+      //   x.Name.toLowerCase().includes(val.toLowerCase())
+      // );
+      const content = school.map((row) => {
+        return row[0].contents.filter((x) =>
+          x.Name.toLowerCase().includes(val.toLowerCase())
+        );
+      });
+      console.log(content);
+      setOutput(content);
+      setSearch(val);
+    }
+  };
   const handleSearch = async (e) => {
     e.preventDefault();
 
@@ -148,6 +189,7 @@ const App = () => {
                       placeholder="Search for Schools"
                       required
                       name="school"
+                      onChange={handleChange}
                     />
                     <InputRightElement width="5rem">
                       <Button
@@ -197,7 +239,52 @@ const App = () => {
               </Center>
             </Box>
           </Center>
-          <Container></Container>
+          <Container>
+            {search ? (
+              output.length >= 1 ? (
+                output.map((row) => {
+                  return (
+                    <Stack mt={4}>
+                      <Button
+                        colorScheme="cyan"
+                        variant="link"
+                        onClick={(e) => {
+                          navigate("Searchkey/Results", {
+                            state: {
+                              data: [{ data: { contents: row[0] } }],
+                              searchkey: row[0].Name,
+                              searchType: row[0].SchoolType,
+                            },
+                          });
+                        }}
+                      >
+                        {row[0].Name}
+                        <i
+                          className="fas fa-link"
+                          style={{ marginLeft: "5px" }}
+                        ></i>
+                      </Button>
+                    </Stack>
+                  );
+                })
+              ) : (
+                <>
+                  <h1
+                    style={{
+                      textAlign: "center",
+                      fontSize: "30px",
+                      textTransform: "upppercase",
+                      color: "gray.400",
+                    }}
+                  >
+                    No Data Found.
+                  </h1>
+                </>
+              )
+            ) : (
+              ""
+            )}
+          </Container>
         </Box>
       </div>
     </>

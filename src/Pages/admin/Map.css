@@ -30,3 +30,46 @@
     margin: 4px 2px;
     border-radius: 50%;
   }
+
+  /* CUSTOM MARKERS */
+
+  /* Add Custom Markers Base on Schools  */
+  .Primary {
+    background-image: url('https://www.suasnews.com/wp-content/uploads/2017/10/mapbox-696x301.png');
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  }
+
+  /* Highschool */
+  .HS{
+    background-image: url('https://th.bing.com/th/id/OIP.mPW1j3oHx3ZX2bnsMndxaAHaHa?pid=ImgDet&rs=1');
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  /* Senior High School */
+  .SHS {
+    background-image: url('https://th.bing.com/th/id/OIP.mPW1j3oHx3ZX2bnsMndxaAHaHa?pid=ImgDet&rs=1');
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  /*  College */
+  .College{
+    background-image: url('https://www.suasnews.com/wp-content/uploads/2017/10/mapbox-696x301.png');
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+
+  }

@@ -3,6 +3,18 @@ import { GeoJSONSource } from "mapbox-gl";
 import ReactDOM from "react-dom";
 import mapboxgl from "mapbox-gl";
 import swal from "sweetalert";
+
+import "./Map.css";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  updateDoc,
+} from "firebase/firestore";
+import db from "../../firebase-config";
 import { useToast } from "@chakra-ui/react";
 
 import "./Map.css";
@@ -21,6 +33,7 @@ function Map({
   readonly,
   markerdrag,
   setMarkerdrag,
+  dataview,
 }) {
   const mapContainerRef = useRef(null);
 
@@ -96,6 +109,41 @@ function Map({
           setMarker(true);
         }
       });
+    } else {
+      const fetch = async () => {
+        const firestoreData = await getDocs(
+          query(collection(db, "Schools"), where("status", "==", 1))
+        );
+
+        firestoreData.forEach((element) => {
+          const el = document.createElement("div");
+          switch (element.data().SchoolType) {
+            case "Primary":
+              el.className = "Primary";
+              break;
+            case "High School":
+              el.className = "HS";
+              break;
+
+            case "Senior High School":
+              el.className = "SHS";
+              break;
+
+            case "College":
+              el.className = "College";
+              break;
+          }
+
+          element.data().Map.map((row) => {
+            new mapboxgl.Marker(el)
+              .setLngLat([row.Lng, row.Lat])
+
+              .addTo(map);
+          });
+        });
+      };
+
+      fetch();
     }
   }, [marker]);
 

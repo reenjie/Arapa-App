@@ -234,6 +234,102 @@ function Account() {
                         />
                       </Box>
 
+                      <Box>
+                        <Text size={"md"} fontSize="20">
+                          Additional info | Links
+                        </Text>
+                      </Box>
+
+                      <Box>
+                        <Text size={"md"} fontSize="16">
+                          Facebook :
+                        </Text>
+                      </Box>
+                      <Box mb={2}>
+                        <Textarea
+                          defaultValue={
+                            doc.data().Facebook ? doc.data().Facebook : null
+                          }
+                          variant={"outline"}
+                          borderColor={"transparent"}
+                          data-type="Facebook"
+                          data-id={doc.id}
+                          onChange={handleChange}
+                        />
+                      </Box>
+
+                      <Box>
+                        <Text size={"md"} fontSize="16">
+                          Instagram :
+                        </Text>
+                      </Box>
+                      <Box mb={2}>
+                        <Textarea
+                          defaultValue={
+                            doc.data().Instagram ? doc.data().Instagram : null
+                          }
+                          variant={"outline"}
+                          borderColor={"transparent"}
+                          data-type="Instagram"
+                          data-id={doc.id}
+                          onChange={handleChange}
+                        />
+                      </Box>
+
+                      <Box>
+                        <Text size={"md"} fontSize="16">
+                          Website :
+                        </Text>
+                      </Box>
+                      <Box mb={2}>
+                        <Textarea
+                          defaultValue={
+                            doc.data().Website ? doc.data().Website : null
+                          }
+                          variant={"outline"}
+                          borderColor={"transparent"}
+                          data-type="Website"
+                          data-id={doc.id}
+                          onChange={handleChange}
+                        />
+                      </Box>
+
+                      <Box>
+                        <Text size={"md"} fontSize="16">
+                          Other Sites :
+                        </Text>
+                      </Box>
+                      <Box mb={2}>
+                        <Textarea
+                          defaultValue={
+                            doc.data().OtherSites ? doc.data().OtherSites : null
+                          }
+                          variant={"outline"}
+                          borderColor={"transparent"}
+                          data-type="OtherSites"
+                          data-id={doc.id}
+                          onChange={handleChange}
+                        />
+                      </Box>
+
+                      <Box>
+                        <Text size={"md"} fontSize="16">
+                          Contact Number:
+                        </Text>
+                      </Box>
+                      <Box mb={2}>
+                        <Textarea
+                          defaultValue={
+                            doc.data().ContactNo ? doc.data().ContactNo : null
+                          }
+                          variant={"outline"}
+                          borderColor={"transparent"}
+                          data-type="ContactNo"
+                          data-id={doc.id}
+                          onChange={handleChange}
+                        />
+                      </Box>
+
                       <Select
                         placeholder="-- Select Type --"
                         backgroundColor={"white"}

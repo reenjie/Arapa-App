@@ -45,7 +45,7 @@ function Search(props) {
   const [marker, setMarker] = useState(true);
   const [latitude, setLatitude] = useState();
   const [markerdrag, setMarkerdrag] = useState(false);
-
+  console.log(data);
   return (
     <>
       <div className="header">
@@ -76,6 +76,7 @@ function Search(props) {
             Back
           </Button>
         </Container>
+        {console.log(data.length)}
         {data.length >= 1 ? (
           data.map((row) => {
             return (
@@ -166,7 +167,65 @@ function Search(props) {
                             {row.data.contents.Weblink}
                           </Text>
                         </Flex>
+                        {row.data.contents.Facebook ? (
+                          <Flex mb={2}>
+                            <Text>Facebook : </Text>
+                            <Spacer />
+                            <Text fontWeight={"bold"}>
+                              {row.data.contents.Facebook}
+                            </Text>
+                          </Flex>
+                        ) : (
+                          ""
+                        )}
 
+                        {row.data.contents.Instagram ? (
+                          <Flex mb={2}>
+                            <Text>Instagram : </Text>
+                            <Spacer />
+                            <Text fontWeight={"bold"}>
+                              {row.data.contents.Instagram}
+                            </Text>
+                          </Flex>
+                        ) : (
+                          ""
+                        )}
+
+                        {row.data.contents.Website ? (
+                          <Flex mb={2}>
+                            <Text>Website : </Text>
+                            <Spacer />
+                            <Text fontWeight={"bold"}>
+                              {row.data.contents.Website}
+                            </Text>
+                          </Flex>
+                        ) : (
+                          ""
+                        )}
+
+                        {row.data.contents.OtherSites ? (
+                          <Flex mb={2}>
+                            <Text>Other Sites : </Text>
+                            <Spacer />
+                            <Text fontWeight={"bold"}>
+                              {row.data.contents.OtherSites}
+                            </Text>
+                          </Flex>
+                        ) : (
+                          ""
+                        )}
+
+                        {row.data.contents.ContactNo ? (
+                          <Flex mb={2}>
+                            <Text>Other Contact No: </Text>
+                            <Spacer />
+                            <Text fontWeight={"bold"}>
+                              {row.data.contents.ContactNo}
+                            </Text>
+                          </Flex>
+                        ) : (
+                          ""
+                        )}
                         <Box>
                           <Stack>
                             <Text>Description : </Text>
@@ -190,7 +249,10 @@ function Search(props) {
                             </Box>
                           </Stack>
                         </Box>
-                        <Picture Files={row.data.contents.Files} />
+                        <Picture
+                          Files={row.data.contents.Files}
+                          IDpicture={row.data.contents.IdPicture}
+                        />
                       </Box>
                     </Container>
                   </GridItem>

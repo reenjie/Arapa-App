@@ -28,6 +28,7 @@ import db from "../../firebase-config";
 import { useToast } from "@chakra-ui/react";
 import RedirectifAuth from "./RedirectifAuth";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import swal from "sweetalert";
 function Login() {
   const toast = useToast();
   const redirect = RedirectifAuth();
@@ -70,12 +71,17 @@ function Login() {
       querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
         const token = { id: doc.id, data: doc.data() };
-        localStorage.setItem("Userauth", JSON.stringify(token));
 
-        if (doc.data().usertype == 1) {
-          navigate("/Admin/Dashboard");
+        if (doc.data().status == 1) {
+          //user Blocked
+          swal("Account Blocked!", "Your Account has been Blocked", "error");
         } else {
-          navigate("/Account/Info");
+          localStorage.setItem("Userauth", JSON.stringify(token));
+          if (doc.data().usertype == 1) {
+            navigate("/Admin/Dashboard");
+          } else {
+            navigate("/Account/Info");
+          }
         }
       });
     } else {

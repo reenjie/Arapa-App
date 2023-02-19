@@ -27,6 +27,7 @@ import {
   doc,
   query,
   where,
+  updateDoc,
 } from "firebase/firestore";
 import swal from "sweetalert";
 import { async } from "@firebase/util";
@@ -37,9 +38,26 @@ function RenderPage({ user, data, setFetch }) {
   const redirect = RedirectifAuth();
   const navigate = useNavigate();
   const [load, setLoad] = useState(false);
+  const [dataId, setDataId] = useState();
   const dData = [];
   const dUser = [];
 
+  const handleBan = async (id, type) => {
+    const users = doc(db, "Users", id);
+    if (type == "unban") {
+      await updateDoc(users, {
+        status: 0,
+      });
+    } else {
+      await updateDoc(users, {
+        status: 1,
+      });
+    }
+
+    swal("Changes Saved", "Changes Saved Successfully!", "success").then(() => {
+      setFetch(true);
+    });
+  };
   const handleDelete = async (e) => {
     const id = e.currentTarget.dataset.id;
     const userid = e.currentTarget.dataset.userid;
@@ -77,7 +95,7 @@ function RenderPage({ user, data, setFetch }) {
           mt={10}
           zIndex={"1"}
         >
-          <Map viewOnly={true} />
+          <Map viewOnly={true} dataview={data} />
         </Box>
 
         <Box bg="white" mt={10}>
@@ -104,13 +122,57 @@ function RenderPage({ user, data, setFetch }) {
                         <Td>{doc.data().Name}</Td>
                         <Td> {doc.data().Address}</Td>
                         <Td>
-                          <Button
-                            variant={"ghost"}
-                            size="sm"
-                            color={"gray.500"}
-                          >
-                            <i className="fas fa-ban"></i>
-                          </Button>
+                          {dUser &&
+                            dUser.map((io) => {
+                              return io.data.SchooliD == doc.id ? (
+                                io.data.status == 1 ? (
+                                  <Button
+                                    variant={"ghost"}
+                                    size="sm"
+                                    color={"red.500"}
+                                    onClick={(e) => {
+                                      swal({
+                                        title: "Are you sure?",
+                                        text: "Once unblocked,User Account account will now  be accessible",
+                                        icon: "warning",
+                                        buttons: true,
+                                        dangerMode: false,
+                                      }).then((willDelete) => {
+                                        if (willDelete) {
+                                          handleBan(io.id, "unban");
+                                        }
+                                      });
+                                    }}
+                                  >
+                                    <i className="fas fa-lock"></i>
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    variant={"ghost"}
+                                    size="sm"
+                                    color={"gray.500"}
+                                    onClick={(e) => {
+                                      swal({
+                                        title: "Are you sure?",
+                                        text: "Once blocked,User Account will no longer  be accessible",
+                                        icon: "warning",
+                                        buttons: true,
+                                        dangerMode: true,
+                                      }).then((willDelete) => {
+                                        if (willDelete) {
+                                          handleBan(io.id, "ban");
+                                        }
+                                      });
+                                    }}
+                                  >
+                                    <i className="fas fa-unlock"></i>
+                                  </Button>
+                                )
+                              ) : (
+                                ""
+                              );
+                            })}
+
                           <Button
                             variant={"ghost"}
                             size="sm"
