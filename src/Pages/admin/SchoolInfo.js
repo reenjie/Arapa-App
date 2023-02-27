@@ -106,6 +106,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
                       readonly={readonly}
                     />
                   </Box>
+
                   <Box w="100%">
                     <Stack direction={"column"} width="100%" columns={2}>
                       <Box>

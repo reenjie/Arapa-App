@@ -37,22 +37,22 @@ const App = () => {
   const [search, setSearch] = useState();
   const [school, setSchool] = useState([]);
   const [output, setOutput] = useState([]);
-  const fetch = async () => {
-    const firestoreData = await getDocs(collection(db, "Schools"));
-    const data = [];
-    firestoreData.forEach((doc) => {
-      data.push([
-        {
-          id: doc.id,
-          contents: [doc.data()],
-        },
-      ]);
-    });
-
-    setSchool(data);
-  };
 
   useEffect(() => {
+    const fetch = async () => {
+      const firestoreData = await getDocs(collection(db, "Schools"));
+      const data = [];
+      firestoreData.forEach((doc) => {
+        data.push([
+          {
+            id: doc.id,
+            contents: [doc.data()],
+          },
+        ]);
+      });
+
+      setSchool(data);
+    };
     fetch();
   }, []);
 
@@ -71,7 +71,7 @@ const App = () => {
           x.Name.toLowerCase().includes(val.toLowerCase())
         );
       });
-      console.log(content);
+
       setOutput(content);
       setSearch(val);
     }
@@ -243,29 +243,31 @@ const App = () => {
             {search ? (
               output.length >= 1 ? (
                 output.map((row) => {
-                  return (
-                    <Stack mt={4}>
-                      <Button
-                        colorScheme="cyan"
-                        variant="link"
-                        onClick={(e) => {
-                          navigate("Searchkey/Results", {
-                            state: {
-                              data: [{ data: { contents: row[0] } }],
-                              searchkey: row[0].Name,
-                              searchType: row[0].SchoolType,
-                            },
-                          });
-                        }}
-                      >
-                        {row[0].Name}
-                        <i
-                          className="fas fa-link"
-                          style={{ marginLeft: "5px" }}
-                        ></i>
-                      </Button>
-                    </Stack>
-                  );
+                  const { Name, SchoolType } = row[0];
+                  console.log(Name);
+                  // return (
+                  //   <Stack mt={4}>
+                  //     <Button
+                  //       colorScheme="cyan"
+                  //       variant="link"
+                  //       onClick={(e) => {
+                  //         navigate("Searchkey/Results", {
+                  //           state: {
+                  //             data: [{ data: { contents: row[0] } }],
+                  //             searchkey: Name,
+                  //             searchType: SchoolType,
+                  //           },
+                  //         });
+                  //       }}
+                  //     >
+                  //       {Name}
+                  //       <i
+                  //         className="fas fa-link"
+                  //         style={{ marginLeft: "5px" }}
+                  //       ></i>
+                  //     </Button>
+                  //   </Stack>
+                  // );
                 })
               ) : (
                 <>

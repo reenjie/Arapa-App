@@ -33,6 +33,10 @@ import swal from "sweetalert";
 import { async } from "@firebase/util";
 import RedirectifAuth from "../auth/RedirectifAuth";
 import Map from "./Map";
+import primary from "../../images/primary.png";
+import hs from "../../images/highschool.png";
+import shs from "../../images/seniorhigh.png";
+import col from "../../images/college.png";
 
 function RenderPage({ user, data, setFetch }) {
   const redirect = RedirectifAuth();
@@ -90,12 +94,38 @@ function RenderPage({ user, data, setFetch }) {
         <Box
           bg="white"
           shadow={"md"}
-          height={"500px"}
+          height={"600px"}
           p={10}
           mt={10}
           zIndex={"1"}
         >
           <Map viewOnly={true} dataview={data} />
+        </Box>
+        <Box>
+          <div style={{ padding: "50px" }}>
+            <h4>Legend :</h4>
+
+            <div style={{ display: "flex" }}>
+              <h6 style={{ marginRight: "20px" }}>
+                <img src={primary} alt="" />
+                Primary
+              </h6>
+
+              <h6 style={{ marginRight: "20px" }}>
+                <img src={hs} alt="" />
+                High School
+              </h6>
+
+              <h6 style={{ marginRight: "20px" }}>
+                <img src={shs} alt="" />
+                Senior High School
+              </h6>
+              <h6 style={{ marginRight: "20px" }}>
+                <img src={col} alt="" />
+                College
+              </h6>
+            </div>
+          </div>
         </Box>
 
         <Box bg="white" mt={10}>
