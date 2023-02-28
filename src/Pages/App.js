@@ -32,6 +32,7 @@ import {
   where,
 } from "firebase/firestore";
 import { useState, useEffect } from "react";
+import { CustomSearch } from "./CustomSearch";
 const App = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState();
@@ -66,13 +67,20 @@ const App = () => {
       // const content = school.contents.filter((x) =>
       //   x.Name.toLowerCase().includes(val.toLowerCase())
       // );
+
       const content = school.map((row) => {
-        return row[0].contents.filter((x) =>
-          x.Name.toLowerCase().includes(val.toLowerCase())
-        );
+        return row[0].contents.map((x) => {
+          return x;
+        });
+      });
+      const def = [];
+      const newSet = content.map((e) => {
+        return e.map((f) => {
+          def.push(f);
+        });
       });
 
-      setOutput(content);
+      setOutput(def);
       setSearch(val);
     }
   };
@@ -240,52 +248,7 @@ const App = () => {
             </Box>
           </Center>
           <Container>
-            {search ? (
-              output.length >= 1 ? (
-                output.map((row) => {
-                  const { Name, SchoolType } = row[0];
-                  console.log(Name);
-                  // return (
-                  //   <Stack mt={4}>
-                  //     <Button
-                  //       colorScheme="cyan"
-                  //       variant="link"
-                  //       onClick={(e) => {
-                  //         navigate("Searchkey/Results", {
-                  //           state: {
-                  //             data: [{ data: { contents: row[0] } }],
-                  //             searchkey: Name,
-                  //             searchType: SchoolType,
-                  //           },
-                  //         });
-                  //       }}
-                  //     >
-                  //       {Name}
-                  //       <i
-                  //         className="fas fa-link"
-                  //         style={{ marginLeft: "5px" }}
-                  //       ></i>
-                  //     </Button>
-                  //   </Stack>
-                  // );
-                })
-              ) : (
-                <>
-                  <h1
-                    style={{
-                      textAlign: "center",
-                      fontSize: "30px",
-                      textTransform: "upppercase",
-                      color: "gray.400",
-                    }}
-                  >
-                    No Data Found.
-                  </h1>
-                </>
-              )
-            ) : (
-              ""
-            )}
+            <CustomSearch search={search} output={output} />
           </Container>
         </Box>
       </div>
