@@ -14,17 +14,31 @@ import {
   Avatar,
   Container,
   SimpleGrid,
+  Flex,
 } from "@chakra-ui/react";
 import { SearchIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import logo from "../images/home.jpg";
 import { Link } from "react-router-dom";
+import arapalogo from "../images/arapalogo.png";
 function Download(props) {
   return (
     <>
       {" "}
       <div className="header">
         <Box float={"left"} p="2">
-          <Text fontSize="2xl">Arapa</Text>
+          <Flex>
+            <Image
+              style={{ width: "40px" }}
+              borderRadius="full"
+              src={arapalogo}
+              alt="Dan Abramov"
+              border="4px solid #0a1a4d"
+            />
+
+            <Text fontSize="2xl" marginLeft={1}>
+              Arapa
+            </Text>
+          </Flex>
 
           {/*  <Image
       src="https://th.bing.com/th/id/OIP.PPmPYp9tRFPxurMFYv4zdQHaGl?pid=ImgDet&rs=1"

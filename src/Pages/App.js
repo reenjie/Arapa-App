@@ -23,6 +23,7 @@ import { SearchIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import logo from "../images/home.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import db from "../firebase-config";
+import arapalogo from "../images/arapalogo.png";
 import {
   collection,
   getDocs,
@@ -134,7 +135,7 @@ const App = () => {
             <Image
               style={{ width: "40px" }}
               borderRadius="full"
-              src=" https://th.bing.com/th/id/OIP.c-bqtmQi_cnQ4u78eArURAHaFj?pid=ImgDet&rs=1"
+              src={arapalogo}
               alt="Dan Abramov"
               border="4px solid #0a1a4d"
             />

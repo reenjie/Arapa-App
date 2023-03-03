@@ -37,6 +37,7 @@ import {
 import Map from "./admin/Map";
 import Picture from "./layouts/Picture";
 import SchoolLogo from "./layouts/SchoolLogo";
+import arapalogo from "../images/arapalogo.png";
 function Search(props) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -45,16 +46,16 @@ function Search(props) {
   const [marker, setMarker] = useState(true);
   const [latitude, setLatitude] = useState();
   const [markerdrag, setMarkerdrag] = useState(false);
-  console.log(data);
+
   return (
     <>
       <div className="header">
         <Box float={"left"} p="2">
-        <Flex>
+          <Flex>
             <Image
               style={{ width: "40px" }}
               borderRadius="full"
-              src=" https://th.bing.com/th/id/OIP.c-bqtmQi_cnQ4u78eArURAHaFj?pid=ImgDet&rs=1"
+              src={arapalogo}
               alt="Dan Abramov"
               border="4px solid #0a1a4d"
             />
