@@ -17,6 +17,9 @@ import {
   Badge,
   Button,
   Stack,
+  Input,
+  GridItem,
+  Grid
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import db from "../../firebase-config";
@@ -43,8 +46,11 @@ function RenderPage({ user, data, setFetch }) {
   const navigate = useNavigate();
   const [load, setLoad] = useState(false);
   const [dataId, setDataId] = useState();
+  const [search,setSearch]  = useState("");
+  // const [dData,setData]  = useState([]);
   const dData = [];
   const dUser = [];
+  const sData = [];
 
   const handleBan = async (id, type) => {
     const users = doc(db, "Users", id);
@@ -129,8 +135,17 @@ function RenderPage({ user, data, setFetch }) {
         </Box>
 
         <Box bg="white" mt={10}>
+       
           <Container p={10} maxW="container.xxl">
             {/*   <Button variant={'outline'} size='sm' colorScheme={'teal'} mb={3}>Add Range</Button> */}
+
+            <Grid>
+              <GridItem>
+              <Input placeholder={"Search for Schools..."} onChange={(e)=>{
+                setSearch(e.target.value);
+              }}/>
+              </GridItem>
+            </Grid>
             <TableContainer>
               <Table variant="striped" colorScheme="facebook" size={"md"}>
                 <Thead>
@@ -141,109 +156,124 @@ function RenderPage({ user, data, setFetch }) {
                   </Tr>
                 </Thead>
                 <Tbody>
+                
                   {data.forEach((doc) => {
                     const datauser = user.forEach((element) => {
                       if (element.data().SchooliD == doc.id) {
                         dUser.push({ id: element.id, data: element.data() });
                       }
                     });
+
                     dData.push(
-                      <Tr>
-                        <Td>{doc.data().Name}</Td>
-                        <Td> {doc.data().Address}</Td>
-                        <Td>
-                          {dUser &&
-                            dUser.map((io) => {
-                              return io.data.SchooliD == doc.id ? (
-                                io.data.status == 1 ? (
-                                  <Button
-                                    variant={"ghost"}
-                                    size="sm"
-                                    color={"red.500"}
-                                    onClick={(e) => {
-                                      swal({
-                                        title: "Are you sure?",
-                                        text: "Once unblocked,User Account account will now  be accessible",
-                                        icon: "warning",
-                                        buttons: true,
-                                        dangerMode: false,
-                                      }).then((willDelete) => {
-                                        if (willDelete) {
-                                          handleBan(io.id, "unban");
-                                        }
-                                      });
-                                    }}
-                                  >
-                                    <i className="fas fa-lock"></i>
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    variant={"ghost"}
-                                    size="sm"
-                                    color={"gray.500"}
-                                    onClick={(e) => {
-                                      swal({
-                                        title: "Are you sure?",
-                                        text: "Once blocked,User Account will no longer  be accessible",
-                                        icon: "warning",
-                                        buttons: true,
-                                        dangerMode: true,
-                                      }).then((willDelete) => {
-                                        if (willDelete) {
-                                          handleBan(io.id, "ban");
-                                        }
-                                      });
-                                    }}
-                                  >
-                                    <i className="fas fa-unlock"></i>
-                                  </Button>
-                                )
-                              ) : (
-                                ""
-                              );
-                            })}
-
-                          <Button
-                            variant={"ghost"}
-                            size="sm"
-                            color={"green.500"}
-                            isLoading={load}
-                            onClick={() => {
-                              setLoad(true);
-                              setTimeout(() => {
-                                navigate("/Admin/Schoolinfo", {
-                                  state: {
-                                    id: doc.id,
-                                    data: doc.data(),
-                                    user: dUser,
-                                  },
-                                });
-                                setLoad(false);
-                              }, 4000);
-                            }}
-                          >
-                            <i className="fas fa-edit"></i>
-                          </Button>
-
+                     
+                      doc.data()
+                    );
+                    
+                    sData.push({
+                      id:doc.id,
+                     
+                    })
+                   
+                 
+                  })}
+               
+              {dData.filter((x)=>x.Name.toLowerCase().includes(search.toLowerCase())).map((row,key)=>{
+              
+                return   <Tr>
+                <Td>{row.Name}</Td>
+                <Td> {row.Address}</Td>
+                <Td>
+                  {dUser &&
+                    dUser.map((io) => {
+                      return io.data.SchooliD == sData[key].id ? (
+                        io.data.status == 1 ? (
                           <Button
                             variant={"ghost"}
                             size="sm"
                             color={"red.500"}
-                            data-id={doc.id}
-                            data-userid={dUser
-                              .filter((x) => x.data.SchooliD == doc.id)
-                              .map((row) => {
-                                return row.id;
-                              })}
-                            onClick={handleDelete}
+                            onClick={(e) => {
+                              swal({
+                                title: "Are you sure?",
+                                text: "Once unblocked,User Account account will now  be accessible",
+                                icon: "warning",
+                                buttons: true,
+                                dangerMode: false,
+                              }).then((willDelete) => {
+                                if (willDelete) {
+                                  handleBan(io.id, "unban");
+                                }
+                              });
+                            }}
                           >
-                            <i className="fas fa-trash-can"></i>
+                            <i className="fas fa-lock"></i>
                           </Button>
-                        </Td>
-                      </Tr>
-                    );
-                  })}
-                  {dData}
+                        ) : (
+                          <Button
+                            variant={"ghost"}
+                            size="sm"
+                            color={"gray.500"}
+                            onClick={(e) => {
+                              swal({
+                                title: "Are you sure?",
+                                text: "Once blocked,User Account will no longer  be accessible",
+                                icon: "warning",
+                                buttons: true,
+                                dangerMode: true,
+                              }).then((willDelete) => {
+                                if (willDelete) {
+                                  handleBan(io.id, "ban");
+                                }
+                              });
+                            }}
+                          >
+                            <i className="fas fa-unlock"></i>
+                          </Button>
+                        )
+                      ) : (
+                        ""
+                      );
+                    })}
+
+                  <Button
+                    variant={"ghost"}
+                    size="sm"
+                    color={"green.500"}
+                    isLoading={load}
+                    onClick={() => {
+                      setLoad(true);
+                      setTimeout(() => {
+                        navigate("/Admin/Schoolinfo", {
+                          state: {
+                            id: doc.id,
+                            data: doc.data(),
+                            user: dUser,
+                          },
+                        });
+                        setLoad(false);
+                      }, 4000);
+                    }}
+                  >
+                    <i className="fas fa-edit"></i>
+                  </Button>
+
+                  <Button
+                    variant={"ghost"}
+                    size="sm"
+                    color={"red.500"}
+                    data-id={doc.id}
+                    data-userid={dUser
+                      .filter((x) => x.data.SchooliD == doc.id)
+                      .map((row) => {
+                        return row.id;
+                      })}
+                    onClick={handleDelete}
+                  >
+                    <i className="fas fa-trash-can"></i>
+                  </Button>
+                </Td>
+              </Tr>
+    
+              })}
                 </Tbody>
                 <Tfoot>
                   <Tr>

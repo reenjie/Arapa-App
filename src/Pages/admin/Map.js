@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { GeoJSONSource } from "mapbox-gl";
 import ReactDOM from "react-dom";
 import mapboxgl from "mapbox-gl";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import swal from "sweetalert";
+import { Input } from "@chakra-ui/react";
 
 import "./Map.css";
 import {
@@ -36,7 +38,7 @@ function Map({
   dataview,
 }) {
   const mapContainerRef = useRef(null);
-
+  const [search, setSearch] = useState();
   const toast = useToast();
 
   useEffect(() => {
@@ -55,7 +57,25 @@ function Map({
       zoom: 10,
     });
 
-    map.addControl(new mapboxgl.NavigationControl(), "top-right");
+    const geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl,
+      placeholder: "Search for places",
+      marker: false,
+    });
+    map.addControl(geocoder);
+    
+
+    // Handle search result
+    geocoder.on("result", (ev) => {
+      const { coordinates } = ev.result.geometry;
+      map.flyTo({
+        center: [coordinates[0],coordinates[1]],
+        zoom: 14,
+      });
+    });
+
+    map.addControl(new mapboxgl.NavigationControl(), "top-left");
 
     if (readonly) {
       new mapboxgl.Marker()
@@ -147,7 +167,13 @@ function Map({
     }
   }, [marker]);
 
-  return <div className="map-container" ref={mapContainerRef} />;
+  return (
+    <>
+      {!viewOnly && <div id="geocoder" class="geocoder"></div>}
+
+      <div className="map-container" ref={mapContainerRef} />
+    </>
+  );
 }
 
 export default Map;

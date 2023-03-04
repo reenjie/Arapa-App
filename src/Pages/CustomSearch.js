@@ -1,22 +1,30 @@
 import React, { useState } from "react";
-import { Stack, Button } from "@chakra-ui/react";
+import { Stack, Button , Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-export const CustomSearch = ({ search, output }) => {
+export const CustomSearch = ({ search = "", output, schooltype }) => {
   const navigate = useNavigate();
 
+  
   return (
-    <div>
-      {search ? (
-        output.filter((k) =>
-          k.Name.toLowerCase().includes(search.toLowerCase())
+    <div style={{height:"200px",overflowY:"scroll",backgroundColor:"rgb(199, 219, 235)"}}>
+      {search || schooltype  ? (
+        output.filter(
+          (k) =>
+            k.Name.toLowerCase().includes(search.toLowerCase()) &&
+            k.SchoolType.toLowerCase().includes(schooltype.toLowerCase()) 
         ).length >= 1 ? (
           output
-            .filter((k) => k.Name.toLowerCase().includes(search.toLowerCase()))
+            .filter(
+              (k) =>
+                k.Name.toLowerCase().includes(search.toLowerCase()) &&
+                k.SchoolType.toLowerCase().includes(schooltype.toLowerCase()) 
+            )
             .map((row) => {
               const { Name, SchoolType } = row;
               return (
                 <Stack mt={4}>
                   <Button
+                    mb={4}
                     colorScheme="cyan"
                     variant="link"
                     onClick={(e) => {
@@ -29,11 +37,18 @@ export const CustomSearch = ({ search, output }) => {
                       });
                     }}
                   >
-                    {Name}
-                    <i
-                      className="fas fa-link"
-                      style={{ marginLeft: "5px" }}
-                    ></i>
+                 
+                 <Text mr={3}>
+                 {Name}
+                  
+                 </Text> | 
+                 <h6 style={{fontSize:"12px",marginLeft:"5px"}}>{SchoolType}</h6>
+                  
+                 <i
+                     className="fas fa-link"
+                     style={{ marginLeft: "5px" }}
+                   ></i>
+                 
                   </Button>
                 </Stack>
               );

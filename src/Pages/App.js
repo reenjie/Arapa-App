@@ -39,6 +39,7 @@ const App = () => {
   const [search, setSearch] = useState();
   const [school, setSchool] = useState([]);
   const [output, setOutput] = useState([]);
+  const [schooltype, setSchooltype] = useState("");
 
   useEffect(() => {
     const fetch = async () => {
@@ -84,6 +85,24 @@ const App = () => {
       setOutput(def);
       setSearch(val);
     }
+  };
+  const handleType = async (e) => {
+    const val = e.target.value;
+
+    const content = school.map((row) => {
+      return row[0].contents.map((x) => {
+        return x;
+      });
+    });
+    const def = [];
+    const newSet = content.map((e) => {
+      return e.map((f) => {
+        def.push(f);
+      });
+    });
+
+    setOutput(def);
+    setSchooltype(val);
   };
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -172,7 +191,7 @@ const App = () => {
       </div>
 
       <div className="Body"></div>
-      <div className="MainBody">
+      <div className="MainBody" >
         <Box position={"relative"}>
           <Center>
             <Box boxSize="sm">
@@ -225,6 +244,7 @@ const App = () => {
                     size={"sm"}
                     name="schooltype"
                     mt={2}
+                    onChange={handleType}
                   >
                     <option value="Primary">Primary</option>
                     <option value="High School">High School</option>
@@ -248,11 +268,17 @@ const App = () => {
               </Center>
             </Box>
           </Center>
-          <Container>
-            <CustomSearch search={search} output={output} />
-          </Container>
+        
         </Box>
+      
       </div>
+      <div>
+            <CustomSearch
+              search={search}
+              output={output}
+              schooltype={schooltype}
+            />
+          </div>
     </>
   );
 };

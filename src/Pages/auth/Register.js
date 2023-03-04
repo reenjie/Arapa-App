@@ -26,6 +26,7 @@ import {
   AlertDescription,
   Grid,
   GridItem,
+  Flex,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import { AttachmentIcon } from "@chakra-ui/icons";
@@ -37,6 +38,7 @@ import swal from "sweetalert";
 import AddCourse from "./AddCourse";
 import Map from "../admin/Map";
 import { FiUpload } from "react-icons/fi";
+import arapalogo from "../../images/arapalogo.png";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 function Register() {
@@ -275,7 +277,19 @@ function Register() {
       <form method={"post"} onSubmit={handleSubmit}>
         <div className="header">
           <Box float={"left"} p="2">
-            <Text fontSize="2xl">Arapa</Text>
+            <Flex>
+              <Image
+                style={{ width: "40px" }}
+                borderRadius="full"
+                src={arapalogo}
+                alt="Dan Abramov"
+                border="4px solid #0a1a4d"
+              />
+
+              <Text fontSize="2xl" marginLeft={1}>
+                Arapa
+              </Text>
+            </Flex>
           </Box>
           <Box float={"right"} p="2"></Box>
         </div>
