@@ -51,17 +51,26 @@ function RenderPage({ user, data, setFetch }) {
   const dData = [];
   const dUser = [];
   const sData = [];
+  const [loaded,setLoaded]=useState(false);
 
-  const handleBan = async (id, type) => {
+  const handleBan = async (id, type ,schoolid) => {
     const users = doc(db, "Users", id);
+    const schooldata = doc(db,"Schools",schoolid);
     if (type == "unban") {
       await updateDoc(users, {
         status: 0,
       });
+
+      await updateDoc(schooldata,{
+          lockstatus:0,
+      })
     } else {
       await updateDoc(users, {
         status: 1,
       });
+      await updateDoc(schooldata,{
+        lockstatus:1,
+    })
     }
 
     swal("Changes Saved", "Changes Saved Successfully!", "success").then(() => {
@@ -158,6 +167,7 @@ function RenderPage({ user, data, setFetch }) {
                 <Tbody>
                 
                   {data.forEach((doc) => {
+                 
                     const datauser = user.forEach((element) => {
                       if (element.data().SchooliD == doc.id) {
                         dUser.push({ id: element.id, data: element.data() });
@@ -178,7 +188,8 @@ function RenderPage({ user, data, setFetch }) {
                   })}
                
               {dData.filter((x)=>x.Name.toLowerCase().includes(search.toLowerCase())).map((row,key)=>{
-              
+                
+             
                 return   <Tr>
                 <Td>{row.Name}</Td>
                 <Td> {row.Address}</Td>
@@ -200,7 +211,7 @@ function RenderPage({ user, data, setFetch }) {
                                 dangerMode: false,
                               }).then((willDelete) => {
                                 if (willDelete) {
-                                  handleBan(io.id, "unban");
+                                  handleBan(io.id, "unban" , io.data.SchooliD);
                                 }
                               });
                             }}
@@ -221,7 +232,7 @@ function RenderPage({ user, data, setFetch }) {
                                 dangerMode: true,
                               }).then((willDelete) => {
                                 if (willDelete) {
-                                  handleBan(io.id, "ban");
+                                  handleBan(io.id, "ban" , io.data.SchooliD);
                                 }
                               });
                             }}
@@ -229,6 +240,9 @@ function RenderPage({ user, data, setFetch }) {
                             <i className="fas fa-unlock"></i>
                           </Button>
                         )
+
+
+                        
                       ) : (
                         ""
                       );
@@ -240,36 +254,40 @@ function RenderPage({ user, data, setFetch }) {
                     color={"green.500"}
                     isLoading={load}
                     onClick={() => {
-                      setLoad(true);
+                     setLoad(true);
+                   
+                 
                       setTimeout(() => {
                         navigate("/Admin/Schoolinfo", {
                           state: {
-                            id: doc.id,
-                            data: doc.data(),
-                            user: dUser,
+                            id: sData.length? sData[key].id : "",
+                            data:row,
+                            user: dUser.length? dUser[key].data : "",
+                            userid:dUser.length>=1? dUser[key].id : ""
+                          
                           },
                         });
                         setLoad(false);
                       }, 4000);
                     }}
                   >
+              
                     <i className="fas fa-edit"></i>
                   </Button>
-
-                  <Button
+               <Button
                     variant={"ghost"}
                     size="sm"
                     color={"red.500"}
-                    data-id={doc.id}
-                    data-userid={dUser
-                      .filter((x) => x.data.SchooliD == doc.id)
-                      .map((row) => {
-                        return row.id;
-                      })}
+                    data-id={sData.length>=1? sData[key].id : ""}
+                    data-userid={dUser.length>=1? dUser[key].id : ""
+                    }
                     onClick={handleDelete}
                   >
-                    <i className="fas fa-trash-can"></i>
-                  </Button>
+               
+          
+                    <i className="fas fa-trash-can"></i> 
+                  </Button> 
+                 
                 </Td>
               </Tr>
     
@@ -325,6 +343,7 @@ function Schools(props) {
           <RenderPage
             data={data}
             user={user}
+         
             fetch={fetch}
             setFetch={setFetch}
           />

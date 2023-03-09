@@ -43,7 +43,7 @@ const App = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const firestoreData = await getDocs(collection(db, "Schools"));
+      const firestoreData = await getDocs(query(collection(db, "Schools"), where("lockstatus", "==", 0)));
       const data = [];
       firestoreData.forEach((doc) => {
         data.push([

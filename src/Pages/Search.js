@@ -246,6 +246,11 @@ function Search(props) {
                               <Text>{row.data.contents.Description}</Text>
                             </Box>
 
+                            <Text>Requirements : </Text>
+                            <Box p={5} bg={"blue.100"}>
+                              <Text>{row.data.contents.requirements && row.data.contents.requirements}</Text>
+                            </Box>
+
                             <Box>
                               <Text>Courses Offer : </Text>
                               <Box p={5}>

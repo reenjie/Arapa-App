@@ -235,6 +235,22 @@ function Account() {
                       </Box>
 
                       <Box>
+                        <Text size={"md"} fontSize="16">
+                          Requirements :
+                        </Text>
+                      </Box>
+                      <Box mb={2}>
+                        <Textarea
+                          defaultValue={doc.data().requirements? doc.data().requirements:""}
+                          variant={"outline"}
+                          borderColor={"transparent"}
+                          data-type="requirements"
+                          data-id={doc.id}
+                          onChange={handleChange}
+                        />
+                      </Box>
+
+                      <Box>
                         <Text size={"md"} fontSize="20">
                           Additional info | Links
                         </Text>

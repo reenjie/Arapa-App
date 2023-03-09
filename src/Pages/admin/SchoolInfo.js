@@ -39,19 +39,20 @@ import Map from "./Map";
 import Picture from "../layouts/Picture";
 import SchoolLogo from "../layouts/SchoolLogo";
 
-function RenderPage({ ID, data, type, readonly, users }) {
+function RenderPage({ ID, data, type, readonly, users , userid }) {
+
   const [longitude, setLongitude] = useState(data.Map[0].Lng);
   const [marker, setMarker] = useState(true);
   const [latitude, setLatitude] = useState(data.Map[0].Lat);
   const [load, setLoad] = useState(false);
 
   const navigate = useNavigate();
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoad(true);
     const School = doc(db, "Schools", ID);
-    const User = doc(db, "Users", users[0].id);
+    const User = doc(db, "Users", userid);
 
     const Map = [
       {
@@ -69,6 +70,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
       Weblink: e.target.schoolwebsite.value,
       Map: Map,
       SchoolType: e.target.schooltype.value,
+      requirements:e.target.requirements.value
     });
 
     await updateDoc(User, {
@@ -225,6 +227,26 @@ function RenderPage({ ID, data, type, readonly, users }) {
                     cursor={readonly ? "default" : "text"}
                   />
                 </Box>
+
+
+                <Box>
+                  <Text size={"md"} fontSize="16">
+                    Requirements :
+                  </Text>
+                </Box>
+                <Box mb={2}>
+                  <Textarea
+                    placeholder="Type requirements here.."
+                    resize={"none"}
+                    defaultValue={data.requirements}
+                    required
+                    name="requirements"
+                    readOnly={readonly ? true : false}
+                    cursor={readonly ? "default" : "text"}
+                  />
+                </Box>
+
+                
                 <Box mb={2}>
                   <Select
                     placeholder="-- Select Type --"
@@ -253,7 +275,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
                 <Box mb={2}>
                   <Input
                     placeholder=""
-                    defaultValue={users[0].data.Name}
+                    defaultValue={users.Name}
                     size="sm"
                     w={"100%"}
                     required
@@ -270,7 +292,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
                 <Box mb={2}>
                   <Input
                     placeholder=""
-                    defaultValue={users[0].data.Contact}
+                    defaultValue={users.Contact}
                     size="sm"
                     w={"100%"}
                     required
@@ -284,7 +306,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
                   user="admin"
                   IDpicture={data.IdPicture}
                 />
-                {console.log(data.IdPicture)}
+              
                 <Box mt="5" float={"right"}>
                   {type == "viewonly" ? null : (
                     <Button
@@ -321,6 +343,7 @@ function RenderPage({ ID, data, type, readonly, users }) {
 }
 function SchoolInfo(props) {
   const location = useLocation();
+ 
   const [ID, setID] = useState(location.state.id);
   const [data, setData] = useState(location.state.data);
 
@@ -329,8 +352,10 @@ function SchoolInfo(props) {
   const [readonly, setReadonly] = useState(location.state.readonly);
   const [fetch, setFetch] = useState(false);
   const [users, setUsers] = useState(
-    location.state.user.filter((x) => x.data.SchooliD == ID)
+    location.state.user
   );
+  
+
   const display = async () => {
     const firestoreData = await getDocs(
       query(collection(db, "Schools"), where("status", "==", 0))
@@ -351,6 +376,7 @@ function SchoolInfo(props) {
           <RenderPage
             ID={ID}
             data={data}
+            userid = {location.state.userid}
             type={type}
             readonly={readonly}
             users={users}

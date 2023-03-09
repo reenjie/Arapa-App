@@ -132,6 +132,8 @@ function Register() {
             IdPicture: idPicture,
             mapID: "",
             status: 0,
+            requirements:e.target.Requirements.value,
+            lockstatus:0,
           }).then(() => {
             //school_unique_id
 
@@ -411,6 +413,16 @@ function Register() {
                 </Box>
                 <Box mb={2}>
                   <Textarea size={"sm"} name="schooldescription" required />
+                </Box>
+
+              
+                <Box>
+                  <Text size={"md"} fontSize="16">
+                    Requirements :
+                  </Text>
+                </Box>
+                <Box mb={2}>
+                  <Textarea size={"sm"} name="Requirements" required />
                 </Box>
 
                 <Box mb={2}>
