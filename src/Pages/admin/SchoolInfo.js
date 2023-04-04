@@ -45,11 +45,17 @@ function RenderPage({ ID, data, type, readonly, users , userid }) {
   const [marker, setMarker] = useState(true);
   const [latitude, setLatitude] = useState(data.Map[0].Lat);
   const [load, setLoad] = useState(false);
+  const [userdata,setUserdata] = useState(users.Password);
 
   const navigate = useNavigate();
  
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const pass  = e.target.newpass.value;
+    
+   
+    
+
     setLoad(true);
     const School = doc(db, "Schools", ID);
     const User = doc(db, "Users", userid);
@@ -72,7 +78,9 @@ function RenderPage({ ID, data, type, readonly, users , userid }) {
       SchoolType: e.target.schooltype.value,
       requirements:e.target.requirements.value
     });
-
+    
+    if(pass == ''){
+      
     await updateDoc(User, {
       Contact: e.target.usercontact.value,
       Name: e.target.username.value,
@@ -86,6 +94,24 @@ function RenderPage({ ID, data, type, readonly, users , userid }) {
         navigate("/Admin/Schools");
       });
     });
+     }else {
+     
+    await updateDoc(User, {
+      Contact: e.target.usercontact.value,
+      Name: e.target.username.value,
+      Password :pass
+    }).then((e) => {
+      setLoad(false);
+      swal(
+        "Updated Successfully",
+        "Data has been updated Successfully!",
+        "success"
+      ).then(() => {
+        navigate("/Admin/Schools");
+      });
+    });
+     }
+ 
   };
 
   return (
@@ -126,6 +152,22 @@ function RenderPage({ ID, data, type, readonly, users , userid }) {
                           name="schoolemail"
                           readOnly={readonly ? true : false}
                           cursor={readonly ? "default" : "text"}
+                        />
+                      </Box>
+
+                      <Box>
+                        <Text size={"md"} fontSize="16">
+                          Change Password :
+                        </Text>
+                      </Box>
+                      <Box>
+                        <Input
+                          
+                          placeholder="type here to change school account password..."
+                          size="sm"
+                          w={"100%"}
+                          name="newpass"
+                         
                         />
                       </Box>
 
@@ -382,6 +424,7 @@ function SchoolInfo(props) {
             users={users}
             setFetch={setFetch}
           />
+         
         }
         Page_title="School-Info"
       />

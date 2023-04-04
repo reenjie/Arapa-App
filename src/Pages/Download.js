@@ -21,6 +21,7 @@ import logo from "../images/home.jpg";
 import { Link } from "react-router-dom";
 import arapalogo from "../images/arapalogo.png";
 function Download(props) {
+  const fileURl = 'https://drive.google.com/file/d/1XGRQ739TtU8d2mccHKwyWi46XDTkb6B5/view?usp=share_link';
   return (
     <>
       {" "}
@@ -70,12 +71,12 @@ function Download(props) {
               <br />
             </Text>
             <Box textAlign={"right"}>
-              <Link to="">
+              <a href={fileURl} download target="_blank">
                 {" "}
                 <Text variant={"link"} mt={10} fontSize="17px" color="blue.400">
                   <i className="fas fa-download"></i> Android [APK]
                 </Text>
-              </Link>
+              </a>
             </Box>
           </Container>
         </Box>

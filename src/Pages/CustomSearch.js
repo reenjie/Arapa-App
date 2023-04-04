@@ -20,7 +20,8 @@ export const CustomSearch = ({ search = "", output, schooltype }) => {
                 k.SchoolType.toLowerCase().includes(schooltype.toLowerCase()) 
             )
             .map((row) => {
-              const { Name, SchoolType } = row;
+              const { Name, SchoolType , Address } = row;
+              console.log(row);
               return (
                 <Stack mt={4}>
                   <Button
@@ -40,6 +41,8 @@ export const CustomSearch = ({ search = "", output, schooltype }) => {
                  
                  <Text mr={3}>
                  {Name}
+                 <br/>
+               <span style={{fontSize:"13px;font-weight:normal"}}>{Address}</span>
                   
                  </Text> | 
                  <h6 style={{fontSize:"12px",marginLeft:"5px"}}>{SchoolType}</h6>
