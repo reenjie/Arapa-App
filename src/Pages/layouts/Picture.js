@@ -139,7 +139,7 @@ function Picture({ Files, IDpicture, dataid, user }) {
   return (
     <div>
       <Box mt={5}>
-        <Text color={"teal.600"} mt={10} mb={10} fontSize="16">
+        {/* <Text color={"teal.600"} mt={10} mb={10} fontSize="16">
           School ID
         </Text>
         <Image
@@ -152,7 +152,7 @@ function Picture({ Files, IDpicture, dataid, user }) {
           objectFit="cover"
           src={IDpicture}
           alt=""
-        />
+        /> */}
 
         <Text color={"teal.600"} mt={10} mb={10} fontSize="16">
           School Pictures 2-3
