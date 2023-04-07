@@ -24,6 +24,7 @@ import {
   AlertTitle,
   AlertDescription,
   color,
+  Flex
 } from "@chakra-ui/react";
 import { SearchIcon, ExternalLinkIcon, SettingsIcon } from "@chakra-ui/icons";
 import logo from "../images/home.jpg";
@@ -47,6 +48,7 @@ import {
 import db from "../firebase-config";
 import { async } from "@firebase/util";
 import swal from "sweetalert";
+import arapalogo from "../images/arapalogo.png";
 
 function Account() {
   const redirect = RedirectifAuth();
@@ -135,7 +137,19 @@ function Account() {
     <>
       <div className="header">
         <Box float={"left"} p="2">
-          <Text fontSize="2xl">Arapa</Text>
+        <Flex>
+            <Image
+              style={{ width: "40px" }}
+              borderRadius="full"
+              src={arapalogo}
+              alt="Dan Abramov"
+              border="4px solid #0a1a4d"
+            />
+
+            <Text fontSize="2xl" marginLeft={1}>
+              Arapa
+            </Text>
+          </Flex>
         </Box>
         <Box float={"right"} p="2">
           <Button

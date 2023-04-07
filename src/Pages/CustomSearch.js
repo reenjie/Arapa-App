@@ -21,7 +21,7 @@ export const CustomSearch = ({ search = "", output, schooltype }) => {
             )
             .map((row) => {
               const { Name, SchoolType , Address } = row;
-              console.log(row);
+             
               return (
                 <Stack mt={4}>
                   <Button
