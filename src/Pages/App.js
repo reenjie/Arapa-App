@@ -111,7 +111,7 @@ const App = () => {
     const stype = e.target.schooltype.value;
 
     const data = [];
-    const firestorePData = await getDocs(collection(db, "Schools"));
+    const firestorePData = await getDocs(query(collection(db, "Schools"), where("status", "==", 1)));
 
     firestorePData.forEach((doc) => {
       data.push({

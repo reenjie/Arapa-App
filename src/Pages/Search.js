@@ -92,6 +92,8 @@ function Search(props) {
         {console.log(data.length)}
         {data.length >= 1 ? (
           data.map((row) => {
+
+            
             return (
               <>
                 <Grid templateColumns="repeat(12, 1fr)" mb={20} gap={0}>
